@@ -78,4 +78,5 @@ MarketPlace endpoint:<br><font style="color:gray">https://www.materials-marketpl
 :maxdepth: 2
 
 register_agent
+sub_apps
 ```
