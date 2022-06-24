@@ -24,7 +24,10 @@ To proceed to the next step, click on "_Dashboard_".
 
 ## 2. Register application
 
-In the _Register or update_ section of _Admin console_ you can upload the file with the openAPI specification.
+In the _Register_ section of _Admin console_ you can provide the necessary information about the application.
+The callback address and scopes are needed for integrating authentication via the MarketPlace in your app.
+
+Here you can must also upload the file with the openAPI specification.
 For more information on this file, refer to the [OpenAPI specification section](mp-api.md).
 
 ![Registration input](../_static/img/app_registration/register_app.png)
@@ -35,6 +38,10 @@ If the registration process is successful, you will be provided with some meanin
 
 In the case that you have developed the application following a setup similar to the aforementioned get-started app, the `client_id` and `client_secret` should be used when you start your application server to enable the Single Sing On mechanism via the MarketPlace platform.
 
+```{Attention}
+For security reasons, the `client_secret` will not be shown again. Store it somewhere safe if you intend to use it in the future.
+```
+
 Next, a platform admin should approve the registration.
 In the meantime, make sure that your application server is running and can be reached.
 
@@ -44,7 +51,7 @@ Once the application has been approved, it will be available for linking in the 
 
 ![Link the application](../_static/img/app_registration/link_app.png)
 
-Now the application information (client ID and capabilities) should be available in the _Summary_.
+Now the application information should be available in the _Summary_.
 
 ![Application Dashboard](../_static/img/app_registration/app_info.png)
 
