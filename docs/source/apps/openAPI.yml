@@ -4,14 +4,6 @@ info:
   title: <APPLICATION NAME>
   description: <APPLICATION DESCRIPTION>
   version: <APPLICATION VERSION>
-  x-application-name: <APPLICATION NAME>
-  x-oauth-client:
-    client-id:
-    callback: <APPLICATION SERVER CALLBACK ADDRESS>
-    scopes: ["scope1", "scope2", "scopeN"]
-  x-contacts:
-    - <MAIL ADDRESS OF MAINTAINER>
-  x-logo: <ENDPOINT TO APPLICATION LOGO>
   x-products:
     - name: <PRODUCT NAME>
       product-id:
