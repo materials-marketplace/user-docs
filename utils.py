@@ -35,7 +35,7 @@ def build_capability_table(openapi):
     for _, path_obj in paths.items():
         for method, method_obj in path_obj.items():
             capability = method_obj.get("operationId")
-            description = method_obj.get("description").replace("\n", " ")
+            description = method_obj.get("summary").replace("\n", " ")
             tags = ", ".join(method_obj.get("tags"))
             capability_table += capability_table_row.format(
                 type=tags, method=method, capability=capability, description=description
