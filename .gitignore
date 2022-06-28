@@ -5,3 +5,7 @@ build/
 dist/
 *.egg-info/
 .eggs/
+
+# Custom
+docs/source/capability_table.md
+docs/source/apps/openAPI.json

@@ -1,6 +1,6 @@
 # MarketPlace Docs
 
-Welcome to the [MarketPlace](https://www.materials-marketplace.eu/) documentation!
+Welcome to the [MarketPlace](https://www.materials-marketplace.eu/) documentation (version {platform_version})!
 
 Here you will find all the information regarding the usage of the MarketPlace platform:
 What it is, how to access it and what to do with it.
