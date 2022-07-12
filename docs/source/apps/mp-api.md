@@ -3,9 +3,12 @@
 To declare which capabilities are supported by your application, a REST-API that complies with the MarketPlace specification must be set for your application.
 The API should be expressed using the [OpenAPI specification](https://www.openapis.org/) standard and be sent to the MarketPlace platform upon [registration](registration.md).
 
+You can browse the official specification with redoc <a href="api.html" target="_blank">here</a>.
+The complete specification is hosted publicly on [GitHub](https://github.com/materials-marketplace/standard-app-api).
+
 ## OpenAPI specification
 
-In this section we will explain some of the most relevant parts of the specification and provide examples for easier development.
+In this section we explain some of the non-trivial parts of the specification.
 
 ### Info
 
@@ -29,22 +32,3 @@ This list includes the `url` values by which your application might be reach
 
 The different `paths` in the application, with their HTTP Methods and the corresponding capability (`operationId`), as well as parameters and responses.
 Refer to the snippets in the next section to see examples of the different fields.
-
-## Sample specifications
-
-Here is a minimal openAPI specification for a simple app with a frontend and a heartbeat.
-
-````{dropdown} Simple specification
-```{literalinclude} openAPI_minimal.yml
-      :language: yaml
-```
-````
-
-The following is a complete specification including all the capabilities supported by the MarketPlace.
-You can browse the specification with redoc <a href="api.html" target="_blank">here</a>.
-
-````{dropdown} Full specification
-```{literalinclude} openAPI.yml
-   :language: yaml
-```
-````

@@ -1,9 +1,17 @@
 """Configuration file for the Sphinx documentation builder."""
+from utils import get_api, source_read_handler, version
 
 # Project information
 project = "MarketPlace"
 copyright = "2022, all rights reserved"
 author = "The MarketPlace Consortium"
+release = version
+
+
+def setup(app):
+    app.connect("builder-inited", get_api)
+    app.connect("source-read", source_read_handler)
+
 
 # General configuration
 extensions = [
@@ -27,7 +35,12 @@ master_doc = "index"
 plantuml = "java -jar lib/plantuml.jar"
 plantuml_output_format = "svg_img"
 
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints"]
+exclude_patterns = [
+    "_build",
+    "Thumbs.db",
+    ".DS_Store",
+    "**.ipynb_checkpoints",
+]
 
 # HTML output
 html_theme = "sphinx_book_theme"
@@ -51,7 +64,7 @@ redoc = [
     {
         "name": "MarketPlace API",
         "page": "apps/api",
-        "spec": "apps/openAPI.yml",
+        "spec": "apps/openAPI.json",
         "embed": True,
         "opts": {
             "suppress-warnings": True,

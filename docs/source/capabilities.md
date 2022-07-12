@@ -30,35 +30,6 @@ Since the API is uniform, it is easy for the user to switch one application with
 
 These are the currently supported capabilities:
 
-| Type           | Method | Capability                  | Description                                      |
-| -------------- | :----: | --------------------------- | ------------------------------------------------ |
-| FrontPage      |  GET   | frontend                    | Goes to login page of the application            |
-| FrontPage      |  GET   | formPage                    | Goes to form page of the application             |
-| System         |  GET   | heartbeat                   | To check if an application is alive              |
-| System         |  GET   | globalSearch                | Search for strings                               |
-| DataSource     |  GET   | getCollection               | Fetches list of datasets                         |
-| DataSource     |  GET   | getCudsCollection           | Fetches list of cuds datasets                    |
-| DataSource     |  GET   | getDataset                  | Fetches a particular Dataset                     |
-| DataSource     |  GET   | getCudsDataset              | Fetches a particular Cuds Dataset                |
-| DataSource     |  GET   | getMetadata                 | Fetch information about certain sets of data     |
-| DataSource     |  GET   | queryDataset                | Execute search query on datasets                 |
-| DataSource     |  POST  | postQueryDataset            | Execute search query on datasets                 |
-| DataSource     |  POST  | exportDatasetWithAttributes | Export data with attribute values of datasets    |
-| DataSource     |  GET   | getDatasetAttributes        | List attributes included in specified dataset    |
-| DataSource     |  GET   | queryCollection             | Query a collection                               |
-| DataSource     |  POST  | postQueryCollection         | Query a collection(Post for GraphQL)             |
-| DataSink       |  POST  | createDataset               | Store a dataset                                  |
-| DataSink       |  POST  | createCudsDataset           | Store cuds dataset                               |
-| DataSink       |  POST  | createCollection            | create a collection(used for workflows)          |
-| DataSink       |  POST  | createDatasetFromURI        | Store a dataset by fetching the data from a URI  |
-| DataSink       |  PUT   | updateDataset               | Edit a dataset                                   |
-| DataSink       |  PUT   | updateCudsDataset           | Edit a cuds dataset                              |
-| DataSink       |  PUT   | updateDatasetFromURI        | Update a dataset by fetching the data from a URI |
-| DataSink       | DELETE | deleteDataset               | Delete a dataset                                 |
-| DataSink       | DELETE | deleteCudsDataset           | Delete a CUDS dataset                            |
-| Transformation |  POST  | newTransformation           | Initialize a Transformation                      |
-| Transformation |  POST  | startTransformation         | Start execution of a Transformation              |
-| Transformation |  POST  | stopTransformation          | Stop the execution of a Transformation           |
-| Transformation |  GET   | getTransformationStatus     | Get the status of a Transformation               |
-| Transformation | DELETE | deleteTransformation        | Delete a transformation                          |
-| Transformation |  GET   | getTransformationList       | Get the list of Transformation instances         |
+```{include} capability_table.md
+
+```
