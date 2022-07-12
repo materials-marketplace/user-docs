@@ -8,7 +8,7 @@ The complete specification is hosted publicly on [GitHub](https://github.com/mat
 
 ## OpenAPI specification
 
-In this section we will explain some of the most relevant parts of the specification.
+In this section we explain some of the non-trivial parts of the specification.
 
 ### Info
 
