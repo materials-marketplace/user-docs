@@ -24,4 +24,3 @@ To verify the use of the message broker is recognized by the MarketPlace, you ma
 
 Once set, the platform will automatically direct incoming requests into the message queue that could be consumed by the application. We provide an easy to follow example that could be adapted to your specific application:<br>
 [https://github.com/materials-marketplace/python-sdk/blob/main/examples/rpc_server.py](https://github.com/materials-marketplace/python-sdk/blob/main/examples/rpc_server.py).
-
