@@ -1,6 +1,6 @@
 # MarketPlace Docs
 
-__Welcome to the MarketPlace documentation!__
+**Welcome to the MarketPlace documentation!**
 
 Here you will find all the information regarding the usage of the MarketPlace platform.
 
