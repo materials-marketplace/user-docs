@@ -1,4 +1,4 @@
-# How to register an application
+# App registration
 
 This section will explain how to register an application to the MarketPlace platform.
 To create your own, refer to the [get started app](https://github.com/materials-marketplace/get-started-app).
@@ -78,12 +78,4 @@ MarketPlace endpoint:<br><font style="color:gray">https://www.materials-marketpl
 __Example 2__<br>
 Application endpoint:<br><font style="color:gray">https://my-app.com/simulation/run?transformationId=4f384c28-8671-4c7d-a6cf-22d127fc0866</font><br>
 MarketPlace endpoint:<br><font style="color:gray">https://www.materials-marketplace.eu/mp-api/proxy/<CLIENT_ID>/<CAPABILITY_NAME>start_transformation?transformationId=4f384c28-8671-4c7d-a6cf-22d127fc0866</font>
-```
-
-```{toctree}
-:hidden: true
-:maxdepth: 2
-
-register_agent
-sub_apps
 ```

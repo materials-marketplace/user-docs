@@ -1,13 +1,10 @@
 # MarketPlace Docs
 
-Welcome to the [MarketPlace](https://www.materials-marketplace.eu/) documentation!
+**Welcome to the MarketPlace documentation!**
 
-```{admonition} Info
-These docs correspond to version {platform_version} of the platform.
-```
+Here you will find all the information regarding the usage of the MarketPlace platform.
 
-Here you will find all the information regarding the usage of the MarketPlace platform:
-What it is, how to access it and what to do with it.
+_This docs are compatible with version `{platform_version}` of the platform._
 
 ````{panels}
    :body: text-center
@@ -50,12 +47,9 @@ What it is, how to access it and what to do with it.
 ````
 
 ```{note}
-Some of the links in this documentation might point to resources with access limited to consortium members.
+- Some of the links in this documentation might point to resources with access limited to consortium members.
 They will be updated when/if they become publicly available.
-```
-
-```{note}
-These docs are an ongoing effort, so they are likely to change and evolve.
+- These docs are an ongoing effort, so they are likely to change and evolve.
 Feel free to report any issues/missing information so we can take a look into it.
 ```
 
@@ -77,6 +71,8 @@ jupyter/sdk.ipynb
 
 apps/mp-api
 apps/registration
+apps/sub_apps
+apps/message_broker
 apps/update
 ```
 
