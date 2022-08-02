@@ -4,7 +4,7 @@
 
 Here you will find all the information regarding the usage of the MarketPlace platform.
 
-_This docs are compatible with version `{platform_version}` of the platform._
+_These docs are compatible with version `{platform_version}` of the platform._
 
 ````{panels}
    :body: text-center
