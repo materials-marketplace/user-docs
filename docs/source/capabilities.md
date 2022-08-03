@@ -27,20 +27,27 @@ However, the capabilities are not enforced, and an application may choose to imp
 Since the API is uniform, it is easy for the user to switch one application with another in case it is favourable.
 
 ## Integration levels
+
 The information returned by the applications (payload) is not restricted, and can be varied in format and readability.
 To differentiate the degree of interoperability an application enables, the following levels have been defined.
+
 ### Level 1 integration
+
 It is the default integration level, which is simply achieved by adhering to the capabilities defined by the platform.
 Any application registered to the platform must (at least) comply to Level 1 integration.
+
 ### Level 2 integration
+
 This level tries to enforce a higher degree of interoperability between applications by making sure the data sent is understandable, both by humans and machines.
 
 Mappings between the data and ontology concepts should exist, and the corresponding mapping be sent out with the data in the headers, e.g.:
+
 ```
 {
     'x-semantic-mappings': 'MappingA'
 }
 ```
+
 The id can then be used to query the semantic mapping capability for the specific mapping.
 
 ## List of supported capabilities
