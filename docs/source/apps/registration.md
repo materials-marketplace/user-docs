@@ -1,4 +1,4 @@
-# App registration
+# Application registration
 
 This section will explain how to register an application to the MarketPlace platform.
 To create your own, refer to the [get started app](https://github.com/materials-marketplace/get-started-app).

@@ -59,7 +59,6 @@ Feel free to report any issues/missing information so we can take a look into it
 :maxdepth: 2
 
 intro
-intro_apps
 capabilities
 jupyter/sdk.ipynb
 ```
@@ -69,6 +68,7 @@ jupyter/sdk.ipynb
 :caption: MarketPlace Applications
 :maxdepth: 2
 
+apps/quickstart
 apps/mp-api
 apps/registration
 apps/sub_apps
