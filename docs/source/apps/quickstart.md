@@ -14,7 +14,12 @@ This section should give them a brief overview on the resources and materials in
 
    Registering an application on the platform means telling the MarkePlace how to reach your application and the capabilities you have decided to implement.
 
-   Check the [registration](./registration) page for a detailed description of the process. In case the application is firewall-protected, see [this](./message_broker)section
+   Check the [registration](./registration) page for a detailed description of the process. In case the application is firewall-protected, see [this](./message_broker)section.
+
+1. **Interacting with the application**
+
+   Apart from the swagger viewer presented in the application registration, the Marketplace also offers a Python library that can be used to communicate with registered applications.
+   More information about this is available in [the SDK](../../jupyter/sdk).
 
 1. **Tutorials and teaching**
 
