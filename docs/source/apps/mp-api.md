@@ -1,7 +1,7 @@
 # Standard API
 
-The MarketPlace defines a standard API through which the registered application can be communicated and monitored via the MarketPlace.
-The API is defines a set of of endpoints or _capabilities_ to specify actions which MarketPlace applications may perform.
+The MarketPlace defines a standard API through which the registered application can be communicated with and monitored via the platform.
+The API defines a set of of endpoints or _capabilities_ to specify actions which MarketPlace applications may perform.
 An application provider may choose to support any subset of these capabilities, depending on the relevant functionalities.
 
 The complete specification is hosted publicly on GitHub:<br>
