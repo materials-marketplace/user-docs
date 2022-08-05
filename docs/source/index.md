@@ -23,7 +23,7 @@ _This docs are compatible with version `{platform_version}` of the platform._
 
    The list of capabilities supported by the MarketPlace
 
-   ```{link-button} capabilities.html#list-of-supported-capabilities
+   ```{link-button} apps/capabilities.html
       :text: Jump to capabilities
       :classes: btn-outline-primary stretched-link
 
@@ -68,7 +68,7 @@ apps/quickstart
 :maxdepth: 2
 
 apps/mp-api
-capabilities
+apps/capabilities
 jupyter/sdk.ipynb
 apps/registration
 apps/sub_apps
