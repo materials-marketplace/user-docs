@@ -8,7 +8,7 @@ The complete specification is hosted publicly on GitHub:<br>
 [https://github.com/materials-marketplace/standard-app-api](https://github.com/materials-marketplace/standard-app-api).<br>
 You can also browse the official specification with Redoc <a href="api.html" target="_blank">here</a>.
 
-Below is more information about the API specification. Read [here](../capabilities) more about app capabilities. Once completed, the application can be registered to the platform, as explained in [this page](registration.md) page.
+Below is more information about the API specification. Read [here](./capabilities) more about app capabilities. Once completed, the application can be registered to the platform, as explained in [this page](registration.md) page.
 
 ## OpenAPI specification
 
