@@ -1,4 +1,4 @@
-# Primary and dependent applications
+# App dependency
 
 MarketPlace supports the registration of one or more applications contained within another platform, such as JupyterHub-based [AiiDalab](https://aiidalab.readthedocs.io/) and [SimPhony remote](https://simphony-remote.readthedocs.io/).
 This requires the registration of one main application for the platform (primary), and one for each of the applications contained (dependent).
