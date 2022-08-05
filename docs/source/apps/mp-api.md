@@ -1,14 +1,19 @@
-# MarketPlace API
+# Standard API
 
-To declare which capabilities are supported by your application, a REST-API that complies with the MarketPlace specification must be set for your application.
-The API should be expressed using the [OpenAPI specification](https://www.openapis.org/) standard and be sent to the MarketPlace platform upon [registration](registration.md).
+The MarketPlace defines a standard API through which the registered application can be communicated with and monitored via the platform.
+The API defines a set of of endpoints or _capabilities_ to specify actions which MarketPlace applications may perform.
+An application provider may choose to support any subset of these capabilities, depending on the relevant functionalities.
 
-You can browse the official specification with redoc <a href="api.html" target="_blank">here</a>.
-The complete specification is hosted publicly on [GitHub](https://github.com/materials-marketplace/standard-app-api).
+The complete specification is hosted publicly on GitHub:<br>
+[https://github.com/materials-marketplace/standard-app-api](https://github.com/materials-marketplace/standard-app-api).<br>
+You can also browse the official specification with Redoc <a href="api.html" target="_blank">here</a>.
+
+Below is more information about the API specification. Read [here](./capabilities) more about app capabilities. Once completed, the application can be registered to the platform, as explained in [this page](registration.md) page.
 
 ## OpenAPI specification
 
-In this section we explain some of the non-trivial parts of the specification.
+The application API is compliant with the [OpenAPI specification](https://www.openapis.org/) standard.
+In the following sub-sections we explain some of the possibly non-trivial parts of the specification.
 
 ### Info
 

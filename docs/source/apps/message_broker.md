@@ -1,4 +1,4 @@
-# Register an application behind a firewall
+# Registration of firewall-protected applications
 
 A message broker is offered to application providers to facilitate the integration of applications running in restricted network access in which direct communication from the outside world is blocked.
 

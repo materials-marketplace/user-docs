@@ -1,4 +1,4 @@
-# Update an application
+# Updating an application
 
 Once an application has already been registered, it can be updated without having to change the client ID and client secret values.
 
