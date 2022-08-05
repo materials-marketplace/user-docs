@@ -7,7 +7,7 @@ This section provides a brief overview on the registration process and usage of 
 
 1. **Application registration.** Registering an application on the platform means telling the MarketPlace how to reach your application and the capabilities you have decided to implement. Check the [registration](./registration) page for a detailed description of the process.
 
-   - **Firewall protected applications.** In case the application is firewall-protected, the MarketPlace provides a built-in message broker to enable the commination in that case. Learn [here](./message_broker) more about it.
+   - **Firewall-protected applications.** In case the application is firewall-protected, the MarketPlace provides a built-in message broker to enable the commination in that case. Learn [here](./message_broker) more about it.
    - **App dependency.** Some applications require other applications in order to run. Read [here](./sub_apps.md) more about such cases.<br><br>
 
 1. **Interacting with the application.** Apart from the swagger viewer presented in the application registration, the Marketplace also offers a Python library that can be used to communicate with registered applications. More information is available [here](../../jupyter/sdk).<br><br>
