@@ -5,7 +5,8 @@ This section provides a brief overview on the registration process and usage of 
 
 1. **Setting up the MarketPlace interface layer.** The MarketPlace defines a standard application API that dictates the way your application can be communicated via the MarketPlace. A preliminary step is therefore to set up a corresponding interface layer for your application. This entails the identification of the [capabilities](../capabilities) your application should support. A good starting point is the [get-started app](https://github.com/materials-marketplace/get-started-app).<br><br>
 
-1. **Application registration.** Registering an application on the platform means telling the MarketPlace how to reach your application and the capabilities you have decided to implement. Check the [registration](./registration) page for a detailed description of the process. 
+1. **Application registration.** Registering an application on the platform means telling the MarketPlace how to reach your application and the capabilities you have decided to implement. Check the [registration](./registration) page for a detailed description of the process.
+
    - **Firewall protected applications.** In case the application is firewall-protected, the MarketPlace provides a built-in message broker to enable the commination in that case. Learn [here](./message_broker) more about it.
    - **App dependency.** Some applications require other applications in order to run. Read [here](./sub_apps.md) more about such cases.<br><br>
 
