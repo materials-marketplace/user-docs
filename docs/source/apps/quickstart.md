@@ -13,4 +13,6 @@ This section provides a brief overview on the registration process and usage of 
 
 1. **Interacting with users.** Supporting resources related to applications, such as technical tutorials and scientific explanations, can be found and added in the [MarketPlace forum](https://forum.materials-marketplace.eu/). It is the recommended space for sharing more detailed information and interacting with potentials customers of your application.<br><br>
 
-1. **Updating your application.** Read [here](./update.md) how to update an already existing application.
+1. **Updating your application.** Read [here](./update.md) how to update an already existing application.<br><br>
+
+1. **Get support.** See [here](../support.md) how to get support in case you encounter issues related to the above or have ideas or comments you would like to share with us.
