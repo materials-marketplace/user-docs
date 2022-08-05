@@ -59,8 +59,7 @@ Feel free to report any issues/missing information so we can take a look into it
 :maxdepth: 2
 
 intro
-capabilities
-jupyter/sdk.ipynb
+apps/quickstart
 ```
 
 ```{toctree}
@@ -68,8 +67,9 @@ jupyter/sdk.ipynb
 :caption: MarketPlace Applications
 :maxdepth: 2
 
-apps/quickstart
 apps/mp-api
+capabilities
+jupyter/sdk.ipynb
 apps/registration
 apps/sub_apps
 apps/message_broker
