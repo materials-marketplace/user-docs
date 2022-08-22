@@ -10,7 +10,7 @@ Apps being one of those elements, the first step will be creating the correspond
 
 First, click on the "_Create_" option of the navigation bar and select the "_App_" item.
 
-![Create knowledge item page](../_static/img/app_registration/create_item.png)
+![Create knowledge item page](../_static/img/app_registration/create_page.png)
 
 Next, define the name of your application, confirm that you have the rights to register such an application, and click on "_Create item_".
 
@@ -25,12 +25,14 @@ To proceed to the next step, click on "_Dashboard_".
 ## 2. Register application
 
 In the _Register_ section of _Admin console_ you can provide the necessary information about the application.
+Here you can also define [app dependency](./sub_apps.md) by choosing the app type.
+
 The callback address and scopes are needed for integrating authentication via the MarketPlace in your app.
 
-Here you can must also upload the file with the openAPI specification.
+You must also upload the file with the openAPI specification.
 For more information on this file, refer to the [OpenAPI specification section](mp-api.md).
 
-![Registration input](../_static/img/app_registration/register_app.png)
+![Registration input](../_static/img/app_registration/registration_input.png)
 
 If the registration process is successful, you will be provided with some meaningful information for your application.
 
@@ -49,11 +51,11 @@ In the meantime, make sure that your application server is running and can be re
 
 Once the application has been approved, it will be available for linking in the _Link_ section of the admin console.
 
-![Link the application](../_static/img/app_registration/link_app.png)
+![Link the application](../_static/img/app_registration/link.png)
 
 Now the application information should be available in the _Summary_.
 
-![Application Dashboard](../_static/img/app_registration/app_info.png)
+![Application Dashboard](../_static/img/app_registration/summary.png)
 
 To be able to use the application, one of the products should be purchased on the _Pricing plans_ section.
 
