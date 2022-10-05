@@ -3,7 +3,7 @@
 ## Discourse server
 
 For general discussions and questions, please visit the Discourse of the MarketPlace:
-[https://dev-discourse.the-marketplace.eu/](https://dev-discourse.the-marketplace.eu/)
+[https://forum.materials-marketplace.eu](https://forum.materials-marketplace.eu)
 
 ## Issue board
 

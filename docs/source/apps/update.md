@@ -1,11 +1,11 @@
-# Update an application
+# Updating an application
 
 Once an application has already been registered, it can be updated without having to change the client ID and client secret values.
 
 ## 1. Update the .yml file
 
-The `version` field must be updated each time the application is updated.
-The `client-id` provided in the initial registration should be included in the `x-oauth-client` section.
+The openAPI specification is now optional, in case only the callback or the scopes are modified.
+Otherwise, the `version` field must be increased each time the application is updated.
 
 If any products remain unchanged, their `product-id` should be included in the `x-products` description.
 
