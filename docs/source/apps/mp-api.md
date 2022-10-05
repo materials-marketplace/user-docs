@@ -17,7 +17,7 @@ In the following sub-sections we explain some of the possibly non-trivial parts 
 
 ### Info
 
-This top level section includes all the metadata related to the application, such as the name (`title`), description (`description`) or version (`version`).
+This top level section includes all the metadata related to the application, such as the name (`title`), description (`description`) or versions. The version of the application corresponds to the `version` field, while `x-api-version` indicates which version of the standard app API the application conforms to.
 
 #### Products
 
