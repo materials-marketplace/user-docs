@@ -39,16 +39,18 @@ https://materials-marketplace.readthedocs.io/en/latest/apps/registration.html
 
 ## Details of deploying the infracstructures and run hpc-gateway app on IWM HPC cluster
 
-Go to the `hpc-gateway-app/deploy` folder and create a `.env` file from `env.template` and fill the field with deployment parameters. 
-The `F7T_TOKEN` is the public key correspond to the private key of the pair store in the firecrest deployment. 
+Go to the `hpc-gateway-app/deploy` folder and create a `.env` file from `env.template` and fill the field with deployment parameters.
+The `F7T_TOKEN` is the public key correspond to the private key of the pair store in the firecrest deployment.
 Start the services by running: `docker-compose up -d`.
 
 ### Firecrest deployment
+
 The firecrest on MarketPlace firecrest server need to be started.
 Go to `firecrest/` folder of `hpc-fire` server and run `docker-compose up -d`.
 The changes of firecrest deployment that needed on MarketPlace HPC can be found on https://github.com/unkcpz/firecrest/pull/1
 
 ### HPC gateway app and rpc-broker service
+
 [.deploy/docker-compose.yml]
 Then need to start the hpc-gateway-app to communicate to the firecrest.
 Since the hpc-app is in the private internal network, we use MarketPlace broker to talk to public network.
