@@ -2,11 +2,11 @@
 
 ## Interact with HPC through MarketPlace proxy using HPC gateway SDK
 
-The HPC gateway SDK is provide for the app developers or the MarketPlace user to run the time consuming tasks over the clusters.
+The HPC gateway SDK is provided for the app developers or the MarketPlace users to run the time consuming tasks over the computational clusters.
 
-For details of how to use sdk to interact with HPC cluster deployed, read the section [here](../jupyter/hpc-sdk.ipynb)
+For details of how to use SDK to interact with HPC cluster deployed, read the section [here](../jupyter/hpc-sdk.ipynb)
 
-The following capabilities are supported and can be called by using the SDK.
+The following methods are supported by the SDK to interact with cluster over MarketPlace proxy.
 
 - Check the availability of system: `app.heartbeat()`
 - Create a new user: `app.create_user()`. Only when user first time use the functionality.
