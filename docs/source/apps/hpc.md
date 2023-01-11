@@ -20,14 +20,14 @@ The following methods are supported by the SDK to interact with cluster over Mar
 
 ## The architecture of user folder
 
-The first time a user needs to call the `app.create_user()` function to create a user in the HPC gateway app's database and create a folder on the remote cluster to store calculations. 
-The remote user folder is named based on the string of the user's Marketplace Email before the `@` symbol, with all non-letter characters converted to underscores. 
-For example, the email materials `marketplace@gmail.com` would have a remote folder name of `materials_marketplace`. 
+The first time a user needs to call the `app.create_user()` function to create a user in the HPC gateway app's database and create a folder on the remote cluster to store calculations.
+The remote user folder is named based on the string of the user's Marketplace Email before the `@` symbol, with all non-letter characters converted to underscores.
+For example, the email materials `marketplace@gmail.com` would have a remote folder name of `materials_marketplace`.
 Each calculation creates an independent folder within the user's folder on the remote cluster.
 
-For security considerations, the `app.create_job()` method is used to create a slurm job script named `run.sh`, with the new_transformation parameter. 
+For security considerations, the `app.create_job()` method is used to create a slurm job script named `run.sh`, with the new_transformation parameter.
 The script contains information for the calculation that is read from the `new_transformation` parameter.
-Once the script is created, it cannot be modified. 
-The calculation is run inside a container specified by the image key, using Singularity. 
-The calculation folder is bind-mounted to the container and the calculation is run from inside the container. 
+Once the script is created, it cannot be modified.
+The calculation is run inside a container specified by the image key, using Singularity.
+The calculation folder is bind-mounted to the container and the calculation is run from inside the container.
 This prevents other users or calculations from maliciously exposing the contents, as the bind mount command is fixed in the job script and only the current folder is visible inside the container.
