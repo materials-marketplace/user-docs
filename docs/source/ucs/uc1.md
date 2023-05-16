@@ -153,20 +153,117 @@ than 0 as there would be no powder to melt or higher as 1 as 1 means everything 
 cannot have a filling fraction higher than 100%. 
 
 
+### propartix_files_creation.py
+
+This file is pretty unique to SimPARTIX and uses the function that are provided by SimPARTIX to create
+the start configurations. The python engine of SimPARTIX is called ProPARTIX which is the reason 
+for the file name. This file has the following structure. 
+
+```python
+import os
+import numpy as np
+import propartix as px
+from simulation_controller.config import SimulationConfig
+
+def create_input_files(foldername: str, simulationConfig: SimulationConfig):
+    """
+    Function to create the start configuration for the MarketPlace simulation.
+
+    simulationConfig : SimulationConfig
+        instance with the specific configuration values for a run
+    """
+    # it follows a list of code lines specific to ProPARTIX to create the 
+    # start configuration
+```
+This function "create_input_files" can access the variables that have been defined in the SimulationConfig
+from above. For example, the sphere diameter can be accessed by
+```python
+simulationConfig.sphereDiameter
+```
+with a similar syntax for all other variables. 
+
+Additionally, there are further ProPARTIX specific functions that are
+- get_output_values
+- create_micress_files
+that are specific to this Use Case have been created while both were sitting together and figured out
+how the output of the SimPARTIX simulation can be converted to a MICRESS input
+
+### simpartix_output.py and SimPARTIXOutput.json
+
+The information that need to be transferred between SimPARTIX and MICRESS are temperature, a quantity called group which is the ID of each powder element, and state of matter which describes whether this specific
+part of the powder is still solid, liquid or vaporous. 
+
+This file "simpartix_output.py" only contains a class with the following content
+```python
+class SimPARTIXOutput:
+    def __init__(self, temperature, group, state_of_matter):
+        self.temperature = temperature
+        self.group = group
+        self.state_of_matter = state_of_matter
+```
+this class definition goes in hand with the file "SimPARTIXOutput.json". 
+At this stage, the mapping of the SimPARTIX quantities temperature, group and state_of_matter
+to Ontologie concepts is realized. This mapping is done in the file "SimPARTIXOutput.json" and it 
+has the following structure. 
+```json
+{
+    "name": "SimPARTIXOutput",
+    "version": "0.0.1",
+    "namespace": "http://onto-ns.com/meta",
+    "meta": "http://onto-ns.com/meta/0.3/EntitySchema",
+    "description": "Output of a SimPARTIX melt pool simulation (MarketPlace UC1).",
+    "dimensions": [
+      {
+        "name": "X",
+        "description": "Number of cells in x direction."
+      },
+      {
+        "name": "Z",
+        "description": "Number of cells in z direction."
+      }
+    ],
+    "properties": [
+      {
+        "_comment": "linked to ThermodynamicTemperature, http://emmo.info/emmo#EMMO_affe07e4_e9bc_4852_86c6_69e26182a17f",
+        "name": "temperature",
+        "type": "float",
+        "unit": "Kelvin",
+        "dims": ["X", "Z"],
+        "description": "List of temperature cells."
+      },
+      {
+        "_comment": "is linked to http://emmo.info/emmo#EMMO_0cd58641_824c_4851_907f_f4c3be76630c",
+        "name": "group",
+        "type": "int",
+        "dims": ["X", "Z"],
+        "description": "List of group (i.e. grain) cells."
+      },
+      {
+        "_comment": "linked to StateOfMatter, http://emmo.info/emmo#EMMO_b9695e87_8261_412e_83cd_a86459426a28",
+        "name": "state_of_matter",
+        "type": "int",
+        "dims": ["X", "Z"],
+        "description": "List of state of matter (i.e. phase) cells."
+      }
+    ]
+}
+```
+In detail, we define the type, the dimension, the name and the corresponding EMMO element. 
+EMMO here is one concept of ontology, but other ontologies are equally applicable at this
+stage. 
 
 
 
-
-## explanation of the optional files
+## Explanation of the optional files
 
 ### pre config
 
-There is a tool called "pre-commit" that allows to perform checks on the source code prior to pushing them to the repository. If you are interested in such a tool, follow the explanation on [https://pre-commit.com][this website]. The result of 
+There is a tool called "pre-commit" that allows to perform checks on the source code prior to pushing them to the repository. If you are interested in such a tool, follow the explanation on [https://pre-commit.com][ this website]. The result of 
 this procedure is file called "pre-commit-config.yaml".
 
 
 ### gitignore file ###
 
 One best element practice when using coding is to apply version control to keep track of your changes in the source code. One such version control system is git. A gitignore file allows to have files in your working directory that 
-should not be tracked by git. For more information, please follow the [https://git-scm.com/docs/gitignore][official documentation]. 
+should not be tracked by git. For more information, please follow the [https://git-scm.com/docs/gitignore][ official documentation]. 
 
