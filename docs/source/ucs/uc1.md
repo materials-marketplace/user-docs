@@ -415,7 +415,7 @@ for the following purpose
 - logging -> for the error message
 - os, shutil, subprocesses -> to create new directories, copy files and start the simulation software SimPARTIX
 - uuid -> a useful library to assign unique IDs to the simulation 
-- dlite is a C implementation of the SINTEF OPen Framework and Tools (SOFT) which is a set of concepts and tools for using data models to efficiently describe and work with scientific data. 
+- dlite is a C implementation of the SINTEF Open Framework and Tools (SOFT) which is a set of concepts and tools for using data models to efficiently describe and work with scientific data. 
 
 We also further import the following classes and function from our previously created files
 ```python
@@ -431,6 +431,339 @@ from simulation_controller.propartix_files_creation import (
 from simulation_controller.simpartix_output import SimPARTIXOutput
 ```
 
+It follows the Simulation class which is given in its completness first to the sake of simplified copy and paste
+and afterwards each of its function is explained more in detail
+```python
+class Simulation:
+    """Manage a single simulation."""
+
+    def __init__(self, request_obj: dict):
+        self.job_id: str = str(uuid.uuid4())
+        self.simulationPath = os.path.join(
+            SIMULATIONS_FOLDER_PATH, self.job_id
+        )
+        create_input_files(self.simulationPath, SimulationConfig(request_obj))
+        self._status: SimulationStatus = SimulationStatus.CREATED
+        self._process = None
+        logging.info(
+            f"Simulation '{self.job_id}' with "
+            f"configuration {request_obj} created."
+        )
+
+    @property
+    def status(self) -> SimulationStatus:
+        """Getter for the status.
+
+        If the simulation is running, the process is checked for completion.
+
+        Returns:
+            SimulationStatus: status of the simulation
+        """
+        if self._status == SimulationStatus.RUNNING:
+            process_status = self.process.poll()
+            if process_status is None:
+                return SimulationStatus.RUNNING
+            elif process_status == 0:
+                logging.info(f"Simulation '{self.job_id}' is now completed.")
+                self.status = SimulationStatus.COMPLETED
+            else:
+                logging.error(f"Error occured in simulation '{self.job_id}'.")
+                self.status = SimulationStatus.ERROR
+        return self._status
+
+    @status.setter
+    def status(self, value: SimulationStatus):
+        self._status = value
+
+    @property
+    def process(self):
+        return self._process
+
+    @process.setter
+    def process(self, value):
+        self._process = value
+
+    def run(self):
+        """
+        Start running a simulation.
+
+        A new process that calls the SimPARTIX binary is spawned,
+        and the output is stored in a separate directory
+
+        Raises:
+            RuntimeError: when the simulation is already in progress
+        """
+        if self.status == SimulationStatus.RUNNING:
+            msg = f"Simulation '{self.job_id}' already in progress."
+            logging.error(msg)
+            raise RuntimeError(msg)
+        outputPath = os.path.join(self.simulationPath, "output")
+        if not os.path.isdir(outputPath):
+            os.mkdir(outputPath)
+        os.chdir(self.simulationPath)
+        self.process = subprocess.Popen(["SimPARTIX"], stdout=subprocess.PIPE)
+        self.status = SimulationStatus.RUNNING
+        logging.info(f"Simulation '{self.job_id}' started successfully.")
+
+    def stop(self):
+        """Stop a running process.
+
+        Raises:
+            RuntimeError: if the simulation is not running
+        """
+        if self.process is None:
+            msg = f"No process to stop. Is simulation '{self.job_id}' running?"
+
+            logging.error(msg)
+            raise RuntimeError(msg)
+        self.process.terminate()
+        self.status = SimulationStatus.STOPPED
+        self.process = None
+        logging.info(f"Simulation '{self.job_id}' stopped successfully.")
+
+    def get_output(self) -> Tuple[str]:
+        """Get the output of a simulation
+
+        Raises:
+            RuntimeError: If the simulation has not run
+
+        Returns:
+            Tuple[str]: data in json format
+                        semantic mapping for the data
+                        mimetype of the data
+        """
+        result = get_output_values(self.simulationPath)
+
+        path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "SimPARTIXOutput.json"
+        )
+        DLiteSimPARTIXOutput = dlite.classfactory(
+            SimPARTIXOutput, url=f"json://{path}"
+        )
+        if self.status in (
+            SimulationStatus.RUNNING,
+            SimulationStatus.CREATED,
+        ):
+            msg = (
+                f"Cannot download, simulation '{self.job_id}' "
+                f"has status '{self.status.name}'."
+            )
+            logging.error(msg)
+            raise RuntimeError(msg)
+        simpartix_output = DLiteSimPARTIXOutput(
+            temperature=result["Temperature_SPH"],
+            group=result["Group"],
+            state_of_matter=result["StateOfMatter_SPH"],
+        )
+        # Store the output as a file for posterity
+        file_path = os.path.join(self.simulationPath, self.job_id)
+        simpartix_output.dlite_inst.save(f"json://{file_path}.json?mode=w")
+        return simpartix_output.dlite_inst.asjson()
+
+    def delete(self):
+        """
+        Delete all the simulation folders and files.
+
+        Raises:
+            RuntimeError: if deleting a running simulation
+        """
+        if self.status == SimulationStatus.RUNNING:
+            msg = f"Simulation '{self.job_id}' is running."
+            logging.error(msg)
+            raise RuntimeError(msg)
+        shutil.rmtree(self.simulationPath)
+        logging.info(f"Simulation '{self.job_id}' and related files deleted.")
+```
+
+It follows the detailed explanation
+
+```python
+def __init__(self, request_obj: dict):
+    self.job_id: str = str(uuid.uuid4())
+    self.simulationPath = os.path.join(
+        SIMULATIONS_FOLDER_PATH, self.job_id
+    )
+    create_input_files(self.simulationPath, SimulationConfig(request_obj))
+    self._status: SimulationStatus = SimulationStatus.CREATED
+    self._process = None
+    logging.info(
+        f"Simulation '{self.job_id}' with "
+        f"configuration {request_obj} created."
+    )
+```
+In the init method, the unique ID is created ("uuid.uuid4()") and stored as internal variable "job_id"
+Based on this ID, a unique simulation folder path is created based on the parent folder PATH that was 
+defined in the file "config.py". 
+Next, the function "create_input_files" from the file "propartix_files_creation" is called. This was again 
+a function unique to SimPARTIX in which the start configuration is created and hence that must 
+be written individually for each new simulation software. 
+Last but not least, the status of the simulation is set to "created" and the corresponding
+pieces of information are written to the log file. 
+
+
+```python
+@property
+def status(self) -> SimulationStatus:
+    """Getter for the status.
+
+    If the simulation is running, the process is checked for completion.
+
+    Returns:
+        SimulationStatus: status of the simulation
+    """
+    if self._status == SimulationStatus.RUNNING:
+        process_status = self.process.poll()
+        if process_status is None:
+            return SimulationStatus.RUNNING
+        elif process_status == 0:
+            logging.info(f"Simulation '{self.job_id}' is now completed.")
+            self.status = SimulationStatus.COMPLETED
+        else:
+            logging.error(f"Error occured in simulation '{self.job_id}'.")
+            self.status = SimulationStatus.ERROR
+    return self._status
+```
+This piece of code checks if the simulation is still running. The idea behind this function is that 
+first we check for the flag "SimulationStatus.RUNNING" as the simulation
+cannot be running otherwise. If the simulation was declared as running the last time, 
+we check again. This is done by self.process.poll(). This function does not work on all 
+operating system, but on Linux it can be used to screen for I/O events that would occur during 
+the simulation. 
+
+
+It follows a list of setter and getter to set the simulation or process status.
+```python
+@status.setter
+def status(self, value: SimulationStatus):
+    self._status = value
+
+@property
+def process(self):
+    return self._process
+
+@process.setter
+def process(self, value):
+    self._process = value
+```
+
+The simulation itself is staretd by the following function
+```python
+def run(self):
+    """
+    Start running a simulation.
+
+    A new process that calls the SimPARTIX binary is spawned,
+    and the output is stored in a separate directory
+
+    Raises:
+        RuntimeError: when the simulation is already in progress
+    """
+    if self.status == SimulationStatus.RUNNING:
+        msg = f"Simulation '{self.job_id}' already in progress."
+        logging.error(msg)
+        raise RuntimeError(msg)
+    outputPath = os.path.join(self.simulationPath, "output")
+    if not os.path.isdir(outputPath):
+        os.mkdir(outputPath)
+    os.chdir(self.simulationPath)
+    self.process = subprocess.Popen(["SimPARTIX"], stdout=subprocess.PIPE)
+    self.status = SimulationStatus.RUNNING
+    logging.info(f"Simulation '{self.job_id}' started successfully.")
+```
+This function first checks if a simulation with that ID is already running like in the case that
+the user clicks multiple times on the "run" button. 
+Next, the output path is defined and created which in this case simply is called "output"
+Then, the change into that directory in which the simulation is to be exectued and then 
+start calling "SimPARTIX" as subprocess. This is like having a terminal and typing 
+"SimPARTIX" into that terminal. Finally, the state of the simulation is set to 
+"running" and the corresponding info message is written to the log file. 
+If you script has to be called via another command, the corresponding 
+command has to be written where "SimPARTIX" is written in third last line. 
+
+Stopping of a simulation is realized via
+```python
+def stop(self):
+    """Stop a running process.
+
+    Raises:
+        RuntimeError: if the simulation is not running
+    """
+    if self.process is None:
+        msg = f"No process to stop. Is simulation '{self.job_id}' running?"
+
+        logging.error(msg)
+        raise RuntimeError(msg)
+    self.process.terminate()
+    self.status = SimulationStatus.STOPPED
+    self.process = None
+    logging.info(f"Simulation '{self.job_id}' stopped successfully.")
+```
+This function first checks if the processes to be stopped is actually running and raises 
+an error message if not. 
+If the process is running, it is stopped by "self.process.terminate()"
+and the accompagning flags "self.status" and "self.process" are set. 
+
+It follows the function to retrieve the simulation results. 
+```python
+def get_output(self) -> Tuple[str]:
+    """Get the output of a simulation
+
+    Raises:
+        RuntimeError: If the simulation has not run
+
+    Returns:
+        Tuple[str]: data in json format
+                    semantic mapping for the data
+                    mimetype of the data
+    """
+    result = get_output_values(self.simulationPath)
+
+    path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "SimPARTIXOutput.json"
+    )
+    DLiteSimPARTIXOutput = dlite.classfactory(
+        SimPARTIXOutput, url=f"json://{path}"
+    )
+    if self.status in (
+        SimulationStatus.RUNNING,
+        SimulationStatus.CREATED,
+    ):
+        msg = (
+            f"Cannot download, simulation '{self.job_id}' "
+            f"has status '{self.status.name}'."
+        )
+        logging.error(msg)
+        raise RuntimeError(msg)
+    simpartix_output = DLiteSimPARTIXOutput(
+        temperature=result["Temperature_SPH"],
+        group=result["Group"],
+        state_of_matter=result["StateOfMatter_SPH"],
+    )
+    # Store the output as a file for posterity
+    file_path = os.path.join(self.simulationPath, self.job_id)
+    simpartix_output.dlite_inst.save(f"json://{file_path}.json?mode=w")
+    return simpartix_output.dlite_inst.asjson()
+```
+
+Finally, the data of a simulation can be deleted by the following function
+```python
+def delete(self):
+    """
+    Delete all the simulation folders and files.
+
+    Raises:
+        RuntimeError: if deleting a running simulation
+    """
+    if self.status == SimulationStatus.RUNNING:
+        msg = f"Simulation '{self.job_id}' is running."
+        logging.error(msg)
+        raise RuntimeError(msg)
+    shutil.rmtree(self.simulationPath)
+    logging.info(f"Simulation '{self.job_id}' and related files deleted.")
+```
+This function first checks if a simulation has stoped running. If it not running, the data is 
+simply deleted using the "rmtree" function of the shutil library. This library is a built-in-library
+of python that can be used to delete folders. 
 
 ## Explanation of the optional files
 
