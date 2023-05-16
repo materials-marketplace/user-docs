@@ -59,21 +59,9 @@ when having a class "classname" in a file "filename" within the directoy "direct
 
 ### config.py
 
-In this file, we have defined two classes with names "SimulationStatus" and "SimulationConfig". 
 
-The file starts with 
-```python
-import logging
 
-# Global Constant to define the extension of zip files
-ZIP_EXTENSION = "zip"
-
-# Global constant to define the path of the folder where all the simulations are saved
-SIMULATIONS_FOLDER_PATH = "/app/simulation_files"
-
-```
-
-and follows with the definition for the simulation states. Here, we define 5 different kinds of states that are
+In this file, we have defined two classes with names "SimulationStatus" and "SimulationConfig" and follows with the definition for the simulation states. Here, we define 5 different kinds of states that are
 - created
 - running
 - completed
@@ -82,6 +70,7 @@ and follows with the definition for the simulation states. Here, we define 5 dif
 
 the class structure looks as follow
 ```python
+import logging
 from enum import Enum
 class SimulationStatus(Enum):
     def __str__(self):
@@ -99,7 +88,16 @@ state = SimulationStatus.CREATED # which is equal to "CREAETD"
 if state == SimulationStatus.CREATED:
     print('simulation has been created')
 ```
-which is a readable syntax to ask for the state of a simulation.
+which is a readable syntax to ask for the state of a simulation. The logging module at the beginning of the snippet 
+is a python in-built library that simplifies to write log files in which error messages are written to. This allows for example to write error messages
+
+```python
+logging.error("This is my error message")
+```
+or info messages
+```python
+logging.info("This is my info message")
+```
 
 It follows the simulation configuration
 ```python
@@ -151,6 +149,18 @@ The same procedure is done for the other parameters. Additionally, we applied so
 the user input variables are in a physically valid range. For example, the filling fraction "phi" cannot be smaller 
 than 0 as there would be no powder to melt or higher as 1 as 1 means everything is filled with powder and we
 cannot have a filling fraction higher than 100%. 
+
+
+Additionaly, the file also contains the following two lines of code
+```python
+# Global Constant to define the extension of zip files
+ZIP_EXTENSION = "zip"
+
+# Global constant to define the path of the folder where all the simulations are saved
+SIMULATIONS_FOLDER_PATH = "/app/simulation_files"
+```
+Which could also occur somewhere else and define global constants which are the folder path in which
+all simulation results are about to appear and the extension for the compression. 
 
 
 ### propartix_files_creation.py
@@ -252,6 +262,174 @@ In detail, we define the type, the dimension, the name and the corresponding EMM
 EMMO here is one concept of ontology, but other ontologies are equally applicable at this
 stage. 
 
+### simulation_manager.py
+
+This script is designed as the interface between the MarketPlace and the simulation. 
+
+The only individual part is the mapping to SimPARTIX quantities to EMMO ontology elements at the beginning 
+```python
+mappings = {
+    "SimpartixOutput": {
+        "name": "SimpartixOutput",
+        "properties": {
+            "temperature": "http://emmo.info/emmo#EMMO_affe07e4_e9bc_4852_86c6_69e26182a17f",
+            "group": "http://emmo.info/emmo#EMMO_0cd58641_824c_4851_907f_f4c3be76630c",
+            "state_of_matter": "http://emmo.info/emmo#EMMO_b9695e87_8261_412e_83cd_a86459426a28",
+        },
+    },
+}
+```
+
+and the remaining part of the script can  be copied
+```python
+class SimulationManager:
+    def __init__(self):
+        self.simulations: dict = {}
+
+    def _get_simulation(self, job_id: str) -> Simulation:
+        """
+        Get the simulation corresponding to the job_id.
+
+        Args:
+            job_id (str): unique id of he simulation
+
+        Raises:
+            KeyError: if there is no simulation matching the id
+
+        Returns:
+            Simulation instance
+        """
+        try:
+            simulation = self.simulations[job_id]
+            return simulation
+        except KeyError as ke:
+            message = f"Simulation with id '{job_id}' not found"
+            logging.error(message)
+            raise KeyError(message) from ke
+
+    def _add_simulation(self, simulation: Simulation) -> str:
+        """Append a simulation to the internal datastructure.
+
+        Args:
+            simulation (Simulation): Object to add
+
+        Returns:
+            str: ID of the added object
+        """
+        job_id: str = simulation.job_id
+        self.simulations[job_id] = simulation
+        return job_id
+
+    def _delete_simulation(self, job_id: str):
+        """Remove a simulation from the internal datastructure.
+
+        Args:
+            job_id (str): id of the simulation to remove
+        """
+        del self.simulations[job_id]
+
+    def create_simulation(self, request_obj: dict) -> str:
+        """Create a new simulation given the arguments.
+
+        Args:
+           requestObj: dictionary containing input configuration
+
+        Returns:
+            str: unique job id
+        """
+        return self._add_simulation(Simulation(request_obj))
+
+    def run_simulation(self, job_id: str):
+        """Execute a simulation.
+
+        Args:
+            job_id (str): unique simulation id
+        """
+        self._get_simulation(job_id).run()
+
+    def get_simulation_output(self, job_id: str) -> str:
+        """Get the output a simulation.
+
+        Args:
+            job_id (str): unique simulation id
+
+        Returns:
+            str: json representation of the dlite object
+        """
+        mapping = "SimpartixOutput"
+        mimetype = "vnd.sintef.dlite+json"
+        simulation = self._get_simulation(job_id)
+        return simulation.get_output(), mapping, mimetype
+
+    def stop_simulation(self, job_id: str) -> dict:
+        """Force termination of a simulation.
+
+        Args:
+            job_id (str): unique id of the simulation
+        """
+        self._get_simulation(job_id).stop()
+
+    def delete_simulation(self, job_id: str) -> dict:
+        """Delete all the simulation information.
+
+        Args:
+            job_id (str): unique id of simulation
+        """
+        self._get_simulation(job_id).delete()
+        self._delete_simulation(job_id)
+
+    def get_simulation_state(self, job_id: str) -> SimulationStatus:
+        """Return the status of a particular simulation.
+
+        Args:
+            job_id (str): id of the simulation
+
+        Returns:
+            SimulationStatus: status of the simulation
+        """
+        return self._get_simulation(job_id).status
+
+    def get_simulation_list(self) -> list:
+        """Return unique ids of all the simulations.
+
+        Returns:
+            list: list of simulation ids
+        """
+        return list(self.simulations.keys())
+```
+
+### simulation.py
+
+This is one of the more complex files and hence should be described more in detail. At the beginning, 
+the necessary libraries are imported
+```python
+import logging
+import os
+import shutil
+import subprocess
+import uuid
+from typing import Tuple
+import dlite
+```
+for the following purpose
+- logging -> for the error message
+- os, shutil, subprocesses -> to create new directories, copy files and start the simulation software SimPARTIX
+- uuid -> a useful library to assign unique IDs to the simulation 
+- dlite is a C implementation of the SINTEF OPen Framework and Tools (SOFT) which is a set of concepts and tools for using data models to efficiently describe and work with scientific data. 
+
+We also further import the following classes and function from our previously created files
+```python
+from simulation_controller.config import (
+    SIMULATIONS_FOLDER_PATH,
+    SimulationConfig,
+    SimulationStatus,
+)
+from simulation_controller.propartix_files_creation import (
+    create_input_files,
+    get_output_values,
+)
+from simulation_controller.simpartix_output import SimPARTIXOutput
+```
 
 
 ## Explanation of the optional files
