@@ -65,6 +65,12 @@ The file starts with
 ```python
 import logging
 
+# Global Constant to define the extension of zip files
+ZIP_EXTENSION = "zip"
+
+# Global constant to define the path of the folder where all the simulations are saved
+SIMULATIONS_FOLDER_PATH = "/app/simulation_files"
+
 ```
 
 and follows with the definition for the simulation states. Here, we define 5 different kinds of states that are
@@ -86,7 +92,68 @@ class SimulationStatus(Enum):
     STOPPED = "STOPPED"
     ERROR = "ERROR"
 ```
-By writing "Enum" into the bracket, this class in heriting from the Enum class which is a built-in class from python. 
+By writing "Enum" into the bracket, this class in heriting from the Enum class which is a built-in class from python. This allows to use a more natural syntax to ask the script whether the simulation has been created or whether it is running. In fact, we can apply the following notation
+```python
+state = SimulationStatus.CREATED # which is equal to "CREAETD"
+# and then ask for that state by
+if state == SimulationStatus.CREATED:
+    print('simulation has been created')
+```
+which is a readable syntax to ask for the state of a simulation.
+
+It follows the simulation configuration
+```python
+class SimulationConfig:
+    def __init__(self, request_obj: dict):
+        err_msg = f"Error creating simulation: {str(request_obj)}. "
+        self.configuration: int = request_obj.get("configuration", 1)
+        self.laserPower: float = request_obj.get("laserPower", 150)
+        self.laserSpeed: float = request_obj.get("laserSpeed", 3.0)
+        self.sphereDiameter: float = request_obj.get("sphereDiameter", 30e-6)
+        if self.sphereDiameter <= 5e-6:
+            err_msg += "Sphere diameter value too little."
+            logging.error(err_msg)
+            raise ValueError(err_msg)
+        self.phi: float = request_obj.get("phi", 0.7)
+        if self.phi >= 1 or self.phi < 0:
+            err_msg += "Phi must be between 0 and 1."
+            logging.error(err_msg)
+            raise ValueError(err_msg)
+        self.powderLayerHeight: float = request_obj.get(
+            "powderLayerHeight", 60e-6
+        )
+        if self.powderLayerHeight < self.sphereDiameter:
+            err_msg += (
+                "Powder layer height must be at least the sphere diameter"
+            )
+            logging.error(err_msg)
+            raise ValueError(err_msg)
+```
+This is a class that contains only an init method. This is the function that is called whenever an instant of the 
+SimulationConfig class is created. Basically, this function receives the input parameters that are made available for
+the Use Case tutorial. These were
+- Laser power (W)
+- Laser scan speed (m/s) with which the laser traverses the powder bed
+- Powder volume fraction (-) to describe the initial filling density of the powder
+- Powder layer thickness (m) which is the height of the powder layer.
+- Particle diameter (m). In this tutorial, all particles will have the same diameter.
+and the corresponding parameters were fed into a dictionary. At the beginning, each of the keys from this
+dictionary is called and in the case that this key has not been defined, a default is being returned. For example the code line
+```python
+self.configuration: int = request_obj.get("configuration", 1)
+```
+asks if there is a key with the name "configuration" in the dictionary "request_obj". If the key is present, its value is returned (that is the value that the user has provided in the MarketPlace interface - to be explained later). If the key
+has not been defined, we use the default value of "1". This value for the configuration is mapped to an integer
+and stored in the variable "self.configuration" to make it available within the instant of the SimulationConfig
+object. 
+
+The same procedure is done for the other parameters. Additionally, we applied some checks to make sure
+the user input variables are in a physically valid range. For example, the filling fraction "phi" cannot be smaller 
+than 0 as there would be no powder to melt or higher as 1 as 1 means everything is filled with powder and we
+cannot have a filling fraction higher than 100%. 
+
+
+
 
 
 
