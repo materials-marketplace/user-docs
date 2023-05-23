@@ -1,6 +1,6 @@
 # Implementation of Use Case 1 into the MarketPlace framework
 
-This documentation explains how the software SimPARTIX is incorporated within the MarketPlace. In detail, this manual provides an overview on most of the function having been created in this Use Case and the manual should serve as a detailed explanation on how to onboard your very own software in the MarketPlace. In the end, we aim at having the "SimPARTIX app". 
+This documentation explains how the software SimPARTIX is incorporated within the MarketPlace. In detail, this manual provides an overview on most of the function having been created in this Use Case and the manual should serve as a detailed explanation on how to onboard your very own software in the MarketPlace. In the end, we aim at having the "SimPARTIX app". The purpose of this manual is to provide guidance of programmers that know how to handle their simulation software and that are now facing the challenge to bring their software onto the MarketPlace. 
 
 Everything is organized within one folder (the parent folder) and we will slowly go through each folder and file therein. In this Use Case, the software SimPARTIX is included. Please follow along each this guide and replace SimPARTIX mentally with your own software in mind and add the corresponding scripts and functions where necessary. 
 In the end of this tutorial, you should have the following files and folder in your working directory
@@ -1058,6 +1058,10 @@ DLite-Python == 0.3.9
 
 ## openAPI.yml
 
+openAPI is standardized which helps that everybody can understand the server communication in a simpler way. Here, we make use of the yaml structure which is one way to create the API specification (the alternative is a json file). The yaml file applies simple key-value pairs like we know from python dictionaries. The yaml file also allows nesting of mappings by where the structure is simply provided by indentation. So let us have a look at the content of the yaml file and then discuss some of the elements more in detail. 
+In short, the API specification describes how to describe the RESTAPI interface. This includes for example properties, endpoints, types of authorization and data types. 
+
+
 ```yml
 ---
 openapi: 3.0.0
@@ -1345,9 +1349,82 @@ components:
             description: Transformation update model
 ```
 
+First the version of openAPI that we are targeting. which is 3.0.0. 
+
+```yml
+openapi: 3.0.0
+```
+
+We start with some basic infos that have the only purpose of providing a description
+
+```yml
+info:
+    title: SimPARTIX
+    description: MarketPlace app for the SimPARTIX simulation software
+    version: 1.0.5
+    x-api-version: 0.3.0
+    x-products:
+        - name: Monthly
+          productId:
+```
+
+and continue with the server on which the software should be running. 
+
+```yml
+servers:
+    - url: https://simpartix.materials-data.space
+```
 
 
+Now we provide all the endpoints which are used as the flask route in the [previous section](#apppy). Let us have a look at some of the endpoints to better understand the yaml file. 
 
+```yml
+/heartbeat:
+    get:
+        security:
+            - bearerAuth: []
+        description: Returns a heartbeat
+        operationId: heartbeat
+        responses:
+            '200':
+                description: Success
+```
+
+This snippet provides the endpoints _heartbeat_ and defines that is only has a _get_ method. There is one function to be called that we named _heartbeat_. Finally, we provide the response types possible where we only provided the 200 response which stands for a successful operation. 
+
+Let us have a look at the function _initialize_ that lives under the route _initialize_. 
+```yml
+/initialize:
+    post:
+        security:
+            - bearerAuth: []
+        description: Initialize a Transformation
+        operationId: newTransformation
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/TransformationConfig'
+        responses:
+            '200':
+                description: Success
+                content:
+                    resourceId:
+                        schema:
+                            type: string
+                            example: 3e22541c-a95e-4443-8cdc-0866171d343b
+            '400':
+                description: Bad Request
+                content:
+                    resourceId:
+                        schema:
+                            type: string
+                            example: Wrong configuration input
+```
+This function has a _post_ method which means data is provided to the function. Here, the data was the description of the simulation setup that was laser power, laser speed and the powder bed description. The error code 400 relates to an error on the client side and can be caused when we provide a bad set of input parameters. This snippet also shows an example input that is expected by the RestAPI for a successful operation. 
+
+The remaining endpoints follow the same strategy and can be understood in the very same way. 
 
 ## Dockerfile
 
@@ -1356,8 +1433,8 @@ In this image, the libraries for SimPARTIX and ProPARTIX are already included su
 
 We provide the content of our docker file and describe its content afterwards
 
-
 ```dockerfile
+# download the image that is already used for SimPARTIX and build up on that image
 FROM hub.cc-asp.fraunhofer.de/simpartixpublic/simpartix:03
 
 # add source code from the repository that includes all source files
@@ -1369,34 +1446,45 @@ RUN make
 ENV PATH="${PATH}:/source/code/"
 ENV PYTHONPATH "${PYTHONPATH}:/source/ProPARTIX/code"
 ENV PROPARTIXPATH "/source/ProPARTIX/code"
-WORKDIR /app #dea
+WORKDIR /app 
 # To store the files from the simulations
 RUN mkdir simulation_files
-ENV FLASK_APP=app.py #dea
-ENV PORT=5000
-ADD simpartix ./simpartix #dea
+ADD simpartix ./simpartix
 ADD simulation_controller ./simulation_controller
 ADD static ./static
 ADD requirements.txt .
-ADD app.py .
 RUN pip install -r requirements.txt
-
+ADD app.py .
+ENV FLASK_APP=app.py
+ENV PORT=5000
 CMD flask run --host=0.0.0.0 --port=${PORT}
 ```
 
 In a first step, we load the SimPARTIX image from the Fraunhofer repository to have a base with all functionalities available that are required by SimPARTIX and ProPARTIX. This however does not include the software itself, but only the libraries.
-In the following, we add the "simpartix" folder to the image (see again [here](#including-your-own-software)) as a git submodule. In the image, the simpartix folder is however called "source". We change into that directory and there into a "code" folder where we put out files with which the SimPARTIX binary is compiled. Calling "RUN make -j 4" compiles the SimPARTIX binary. Similarly, we change into the ProPARTIX folder and compile here the files that are necessary for the ProPARTIX engine. At this point, the SimPARTIX binary and ProPARTIX functions are all present. 
+In the following, we add the "simpartix" folder to the image (see again [here](#including-your-own-software)) as a git submodule. In the image, the simpartix folder is however called "source". We change into that directory and there into a "code" folder where we put out files with which the SimPARTIX binary is compiled. Calling "RUN make -j 4" compiles the SimPARTIX binary. Similarly, we change into the ProPARTIX folder and compile here the files that are necessary for the ProPARTIX engine. At this point, the SimPARTIX binary and ProPARTIX functions are all present. We then move into the folder "app" in which alle the services of the SimPARTIX app are going to be running. We create a new folder _simulation\_files_ and define the flask app and the port. Now the simpartix folder that includes the compiled SimPARTIX binary is added to the image as well as the _simulation\_controller_ folder in which all the controller python files are located. The folder static contains some images that is of less importance. We add the file _requirements.txt_ and install all the python libraries via pip. Finally, we add the file _app.py_, set the corresponding environment variables for flask and start the flask application. 
 
-In the following, paths to the SimPARTIX binary and to the ProPARTIX functions are added to the main path as well as to the python path. 
 
-The simulation results are supposed to be stored in a folder called "simulation_files". This folder is hence created next. 
+## prepare_deployment.sh
 
-The web communication needs to have port number to which it is listening. This port number is an arbitrary number, but it needs to be defined. 
+This script needs to be executed once in order to export the client id, the sercret and the flask secret key to a file. These files are going to be used in the following. 
+
+```bash
+set -e
+set -u
+
+source .env
+export FLASK_SECRET_KEY=$(openssl rand -base64 24)
+echo -n $CLIENT_ID > secrets/client_id
+echo -n $CLIENT_SECRET > secrets/client_secret
+echo -n $FLASK_SECRET_KEY > secrets/flask_secret
+
+```
 
 
 
 ## docker-compose.yml
 
+Docker compose is build on the docker engine and it is used for running multiple container applications. Using docker compose requires a file _docker-compose.yml_ which is discussed in this section. 
 
 ```yml
 ---
@@ -1425,20 +1513,17 @@ secrets:
 
 ```
 
+This files provides the following information 
+- the version number of the docker engine
+- the services which in this case is only the simpartix app. For each service, we must specify where docker can find the corresponding docker file. This is done by the keyword _build_ and the file is in this folder. 
+- the secrets for the client and the flask application. 
 
-## prepare_deployment.sh
-
+When having a docker compose yaml file within our directory, the only command we have to execute is 
 ```bash
-set -e
-set -u
-
-source .env
-export FLASK_SECRET_KEY=$(openssl rand -base64 24)
-echo -n $CLIENT_ID > secrets/client_id
-echo -n $CLIENT_SECRET > secrets/client_secret
-echo -n $FLASK_SECRET_KEY > secrets/flask_secret
-
+docker-compose up
 ```
+
+Now docker is automatically downloading all layers and install dependencies. 
 
 
 
