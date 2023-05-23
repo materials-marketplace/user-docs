@@ -1,14 +1,14 @@
 # Implementation of Use Case 1 into the MarketPlace framework
 
-This documentation explains how the software SimPARTIX is incorporated within the MarketPlace. In detail, this manual provides an overview on most of the function having been created in this Use Case and the manual should serve as a detailed explanation on how to onboard your very own software in the MarketPlace. In the end, we aim at having the "SimPARTIX app". The purpose of this manual is to provide guidance of programmers that know how to handle their simulation software and that are now facing the challenge to bring their software onto the MarketPlace. 
+This documentation explains how the software SimPARTIX is installed at the MarketPlace. In detail, this manual provides an overview on most of the functions that were created for this Use Case and the manual should serve as a detailed explanation on how to onboard your very own software at the MarketPlace. In the end, we aim at having the "SimPARTIX app" which should allow to access SimPARTIX via the MarketPlace. The purpose of this manual is to provide guidance of programmers that know how to handle their simulation software and that are now facing the challenge to bring their software onto the MarketPlace. 
 
-Everything is organized within one folder (the parent folder) and we will slowly go through each folder and file therein. In this Use Case, the software SimPARTIX is included. Please follow along each this guide and replace SimPARTIX mentally with your own software in mind and add the corresponding scripts and functions where necessary. 
+All files are organized within one folder (the parent folder) and we will slowly go through each folder and each file therein. In this Use Case, the software SimPARTIX is included. Please follow along with this guide and replace SimPARTIX mentally with your own software in mind and add the corresponding scripts and functions where necessary. 
 In the end of this tutorial, you should have the following files and folder in your working directory
 
 - [Folder] [simpartix](#including-your-own-software)
 - [Folder] [simulation_controller](#the-simulation-controller-folder)
-- [.gitmodules](#including-your-own-software)
 - [app.py](#apppy)
+- [.gitmodules](#including-your-own-software)
 - [docker-compose.yml](#docker-composeyml)
 - [Dockerfile](#dockerfile)
 - [openAPI.yml](#openapiyml)
@@ -22,18 +22,18 @@ We will first start with including the own software and then gradually move on t
 
 ## Including your own software
 
-In a first step, the own software should be made available in the folder. In our case, we host SimPARTIX on Gitlab and thereby use Git as version control system. Using the [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) commands, we added
+In a first step, the own software should be made available. In our case, we host SimPARTIX on Gitlab and use Git as version control system. Using the [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) commands, we added
 our software to the folder. This procedure allows us to keep the own software up to date easily as frequent changes in the source code are expected in order to implement new routines for the communication in MarketPlace. 
 
 The result of this procedure are 
-- [Folder] simpartix
-- .gitmodules
+- [Folder] simpartix with the source code for SimPARTIX
+- a file .gitmodules that was created by git
 
-Please read through the git submodule documentation if you are not familiar with it. 
+Please read through the [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) documentation if you are not familiar with it. 
 
 ## The simulation controller folder
 
-Now we are working on the folder "simulation_controller" which contains several files that provide the functions to create, start and stop a simulation as well as retrieving the simulation results. The converter function to convert the SimPARTIX results to MICRESS input files are also placed here. 
+Now we are working on the folder "simulation_controller" which contains several files that provide the functions to create, start and stop a simulation as well as retrieving the simulation results. The converter function to convert the SimPARTIX results to MICRESS input files are also placed here. These functions will be called by the SimPARTIX app via the RestAPI. 
 
 Let us have a look at the following list of files that are all found in the folder "simulation_controller"
 - \_\_init\_\_.py
@@ -54,20 +54,19 @@ from directory.filename import classname
 ```
 
 when having a class "classname" in a file "filename" within the directory "directory". We will use this commands 
-to a great extend in the following files. 
+to a great extend in the following files in order to import classes from specific files, two of mich are presented in the next chapter. 
 
 
 ### config.py
 
-In this file, we have defined two classes, "SimulationStatus" and "SimulationConfig", and additionally we provide a definition for the simulation states. Here, we define 5 different kinds of simulation states that are
+In this file, we have defined two classes, "SimulationStatus" and "SimulationConfig", and additionally we provide a definition for the simulation states. Here, we define 5 simulation states that are
 - created
 - running
 - completed
 - stopped
 - error
-These 5 states were found to cover all situation. 
-
-The corresponding class structure looks as follow
+  
+These 5 states were found to cover all situation. The corresponding class structure looks as follow
 ```python
 from enum import Enum
 class SimulationStatus(Enum):
@@ -132,7 +131,7 @@ dictionary is called and in the case that this key has not been defined, a defau
 ```python
 self.configuration: int = request_obj.get("configuration", 1)
 ```
-asks if there is a key with the name "configuration" in the dictionary "request_obj". If the key is present, its value is returned (that is the value that the user has provided in the MarketPlace interface - to be explained later). If the key has not been defined, we use the default value of "1". This value for the configuration is mapped to an integer
+asks if there is a key with the name "configuration" in the dictionary "request_obj". If the key is present, its value is returned (that is the value that the user has provided in the MarketPlace web interface). If the key has not been defined, we use the default value of "1". This value for the configuration is mapped to an integer
 and stored in the variable "self.configuration" to make it available within the instant of the SimulationConfig
 object. 
 
@@ -166,8 +165,8 @@ all simulation results are about to appear and the extension for the compression
 
 ### propartix_files_creation.py
 
-This file is pretty unique to SimPARTIX and uses the function that are provided by SimPARTIX to create
-the start configurations. The python engine of SimPARTIX is called ProPARTIX which is the reason 
+This file is tailored to SimPARTIX and it uses the function that are provided by SimPARTIX to create
+the start configurations. The python engine of SimPARTIX is ProPARTIX which is the reason 
 for the file name. This file has the following structure. 
 
 ```python
@@ -224,7 +223,7 @@ class SimPARTIXOutput:
 This class is hence able to hold the data of interest of the simulation result. 
 The class definition goes hand in hand with the file "SimPARTIXOutput.json" that is explained next. 
 At this stage, the mapping of the SimPARTIX quantities temperature, group and state_of_matter
-to ontology concepts is started. In order to make the data of an SimPARTIX output available to other programs, it needs a description of the data that we provide in the file "SimPARTIXOutput.json". In this case, we apply a json file to provide this description. For each of the properties of interest (temperature, group and state of matter), we apply a "properties" field in which we provide the corresponding names of the field, the unit and the dimensions as well as a description. 
+to ontology concepts is started. This is what is referred to as Level 2 integration on the MarketPlace that should provide a clear description on the data. In order to make the data of an SimPARTIX output available to other programs, it needs a description of the data that we provide in the file "SimPARTIXOutput.json". In this case, we apply a json file to provide this description. For each of the properties of interest (temperature, group and state of matter), we apply a "properties" field in which we provide the corresponding names of the field, the unit and the dimensions as well as a description. 
 
 ```json
 {
@@ -271,7 +270,7 @@ to ontology concepts is started. In order to make the data of an SimPARTIX outpu
 ### simulation_manager.py
 
 We continue with the file "simulation_manager.py" where we directly continue with linking the quantities of the simulation to the ontology. In this Use Case we apply the [EMMO](https://emmc.eu/news/emmo-new-name-and-logo/) ontology, but other ontologies are equally applicable at this
-stage. This is realized by simple dictionary. 
+stage. This is realized by a simple dictionary. 
 
 ```python
 mappings = {
@@ -285,7 +284,7 @@ mappings = {
     },
 }
 ```
-Obviously, we apply a nested dictionary. Please note at this point, that we have provided a name to our mapping that we called "SimpartixOutput". If you want to provide further options for mapping, this can easily be done by another dictionary within the mappings dictionary. 
+Obviously, we apply a nested dictionary. Please note at this point that we have provided a name to our mapping that we called "SimpartixOutput". If you want to provide further options for mapping, this can easily be done by another dictionary within the mappings dictionary. 
 
 The remaining part of the script can be copied directly and needs only few adoptions.
 ```python
@@ -405,7 +404,7 @@ class SimulationManager:
         return list(self.simulations.keys())
 ```
 
-Most of the functions are self-explanatory. One function, the get_simulation_output function, will need some adoptions however. This function should return the simulation results, but additionally it should also provide the _mapping_ to map the result names to the ontology and the _mimetype_ that is the file type (dlite in your case).
+Most of the functions are self-explanatory. One function, the get_simulation_output function, will need some adoptions however. This function should return the simulation results, but additionally it should also provide the _mapping_ to map the result names to the ontology and the file type that is provided by the variable _mimetype_ (dlite in our case).
 
 
 ### simulation.py
@@ -425,9 +424,9 @@ for the following purpose
 - os, shutil, subprocesses -> to create new directories, copy files and start the simulation software SimPARTIX
 - uuid -> a useful library to assign unique IDs to the simulation 
 - Tuple from tying is imported. In the function declaration, the return type of the data is also provided. Tuple is a built-in data type of python, but in the current version of python, this data type must be imported in order to be provided as return type. 
-- _dlite_ is a C implementation of the SINTEF Open Framework and Tools which is a set of concepts and tools for using data models to efficiently describe and work with scientific data. 
+- dlite is a C implementation of the SINTEF Open Framework and Tools which is a set of concepts and tools for using data models to efficiently describe and work with scientific data. 
 
-We also further import the following classes and function from our previously created files
+We also import the following classes and function from our previously created files
 ```python
 from simulation_controller.config import (
     SIMULATIONS_FOLDER_PATH,
@@ -441,7 +440,7 @@ from simulation_controller.propartix_files_creation import (
 from simulation_controller.simpartix_output import SimPARTIXOutput
 ```
 
-It follows the Simulation class which is given in its completeness first to the sake of simplified copy and paste and afterwards each of its functions is explained more in detail
+It follows the "Simulation" class which is given in its completeness first to the sake of simplified copy and paste and afterwards each of its functions is explained more in detail
 ```python
 class Simulation:
     """Manage a single simulation."""
@@ -632,12 +631,12 @@ def run(self):
 ```
 This function first checks if a simulation with that ID is already running like in the case that
 the user accidentally clicks multiple times on the "run" button. 
-Next, the output path is defined and created which in this case simply is called "output"
-Then, the change into that directory in which the simulation is to be executed and then 
+Next, the output path is defined and created which in this case is simply called "output"
+Then, we change into that directory in which the simulation is to going to be executed and then 
 start calling "SimPARTIX" as subprocess. This is like having a terminal and typing 
 "SimPARTIX" into that terminal. Finally, the state of the simulation is set to 
 "running" and the corresponding info message is written to the log file. 
-If you script has to be called via another command, the corresponding 
+If your script has to be called via another command, the corresponding 
 command has to be written where "SimPARTIX" is written in third last line. 
 
 
@@ -652,7 +651,7 @@ def status(self) -> SimulationStatus:
         SimulationStatus: status of the simulation
     """
     if self._status == SimulationStatus.RUNNING:
-        process_status = self.process.poll() #dea
+        process_status = self.process.poll()
         if process_status is None:
             return SimulationStatus.RUNNING
         elif process_status == 0:
@@ -668,15 +667,15 @@ cannot be running otherwise. If the simulation was declared as running the last 
 we check again. We remember that the simulation resource when starting the simulation
 was stored in the variable _self.process_. This allows us to check if there is still a running
 resources behind _self.process_.
-This is done by self.process.poll(). This function does not work on all 
+This is done by _self.process.poll()_. This function does not work on all 
 operating system, but on Linux it can be used to screen for I/O events that would occur during 
 the simulation. 
 
-This function is realized via a property decorator in the first line. Usually, the function needs to be called via 
+This function is written with a property decorator in the first line. Usually, a function needs to be called with opening and closing bracket, i.e. 
 ```python
 Simulation.status()
 ```
-with opening and closing bracket. Adding '@property' allows to use the following notation
+Adding '@property' allows to use the following notation
 ```python
 Simulation.status
 ```
@@ -697,7 +696,7 @@ def process(self):
 def process(self, value):
     self._process = value
 ```
-Similarly to the _@property_ decorator, _@status.setter_ is another decorator that serves the same purpose like _@property_ but just to realize a setter function. Here, the first word in _@status.setter_ is the function name, followed by a period, followed by the key word _setter_. 
+Similarly to the _@property_ decorator, _@status.setter_ is another decorator that serves the same purpose like _@property_ but just to realize a setter function. Here, the first word in _@status.setter_ is the function name, followed by a period, followed by the keyword _setter_. 
 
 
 Stopping of a simulation is realized via
@@ -718,9 +717,7 @@ def stop(self):
     self.process = None
     logging.info(f"Simulation '{self.job_id}' stopped successfully.")
 ```
-This function first checks if the processes to be stopped is actually running as it cannot be stopped otherwise and raises an error message if it is not running. 
-If the process is running, it is stopped by _self.process.terminate()_
-and the accompanying flags _self.status_ and _self.process_ are set. 
+This function first checks if the processes to be stopped is actually running as it cannot be stopped otherwise and raises an error message if it is not running. If the process is running, it is stopped by _self.process.terminate()_ and the accompanying flags _self.status_ and _self.process_ are set. 
 
 Finally, the data of a simulation can be deleted by the following function
 
@@ -740,7 +737,7 @@ def delete(self):
     logging.info(f"Simulation '{self.job_id}' and related files deleted.")
 ```
 
-This function first checks if a simulation has stopped running. If it not running, the data is 
+This function first checks if a simulation has already stopped running. If it is not running, the data is 
 simply deleted using the "rmtree" function of the shutil library. This library is a built-in-library
 of python that can be used to delete folders. 
 
@@ -790,7 +787,7 @@ This function works as follows. First,
 ```python
 result = get_output_values(self.simulationPath)
 ```
-get the dictionary _result_ so that each piece of result can be called by using keys. Now, an empty dlite object is created. In the init method of that class we provide the object _SimPARTIXOutput_ the content of which is displayed here again
+gets the dictionary _result_ so that each piece of result can be called by using keys. Now, an empty dlite object is created. In the init method of that class we provide the object _SimPARTIXOutput_ the content of which is displayed here again
 ```python
 class SimPARTIXOutput:
     def __init__(self, temperature, group, state_of_matter):
@@ -809,8 +806,7 @@ After a check that the simulation has actually finished, the data in the _result
 ## app.py
 
 This is a function that is actually called when building the docker image. 
-
-The handling of the web application is realized by flask which is a python libarary. Understanding this part requires profound knowledge on html and CSS. The build up of the webpage is not part of this tutorial. 
+The handling of the web application is realized by flask which is a python libarary. Understanding this part requires knowledge on html and CSS. Creating the webpage is not part of this tutorial. 
 
 We start with importing the main libraries
 
@@ -842,7 +838,7 @@ We then create an object of the SimulationManger class.
 simulation_manager = SimulationManager()
 ```
 
-In flask, the url route is provided with the _@app.route_ decorator as follow. We will hence see lines such as 
+In flask, the endpoints are provided with the _@app.route_ decorator. We will hence see lines such as 
 
 ```python
 @app.route("/")
@@ -1002,7 +998,7 @@ def get_results():
     )
 ```
 
-We have two functions related to ontologies to realize the level-2 integration of These are 
+We have two functions related to ontologies to realize the level-2 integration. These two functions are 
 
 ```python
 @app.route("/mappings", methods=["GET"])
@@ -1029,7 +1025,7 @@ def get_mapping(semantic_mapping_id: str):
     )
 
 ```
-to provide a list of all existing mapping and to retrieve one specific mapping. 
+to provide a list of all existing mappings and to retrieve one specific mapping. 
 
 The file ends with the following line of code
 
@@ -1038,7 +1034,7 @@ if __name__ == "__main__":
     app.run()
 ```
 
-This piece of code is a kind of safety check that the function "app.run()" is only called when this scrip "app.py" is actually being called. It is also possible to load this script from somewhere else via "import app" if one of the functions should be use elsewhere and in this case, the function "run()" should not be called. 
+This piece of code is a kind of safety check that the function "app.run()" is only called when "app.py" is actually being called by docker. It is also possible to load this script from somewhere else via "import app" if one of the functions should be use elsewhere and in this case, the function "run()" should not be called. 
 
 
 ## requirements.txt
@@ -1058,8 +1054,8 @@ DLite-Python == 0.3.9
 
 ## openAPI.yml
 
-openAPI is standardized which helps that everybody can understand the server communication in a simpler way. Here, we make use of the yaml structure which is one way to create the API specification (the alternative is a json file). The yaml file applies simple key-value pairs like we know from python dictionaries. The yaml file also allows nesting of mappings by where the structure is simply provided by indentation. So let us have a look at the content of the yaml file and then discuss some of the elements more in detail. 
-In short, the API specification describes how to describe the RESTAPI interface. This includes for example properties, endpoints, types of authorization and data types. 
+openAPI is a standardized format which helps that everybody can understand the server communication in a simpler way. Here, we make use of the yaml structure which is one way to create the API specification (the alternative is a json file). The yaml file applies simple key-value pairs like we know from python dictionaries. The yaml file also allows nesting of mappings by where the structure is simply provided by indentation. So let us have a look at the content of the yaml file and then discuss some of the elements more in detail. 
+In short, the API specification describes how to describe the RestAPI interface. This includes for example properties, endpoints, types of authorization and data types. 
 
 
 ```yml
@@ -1349,13 +1345,13 @@ components:
             description: Transformation update model
 ```
 
-First the version of openAPI that we are targeting. which is 3.0.0. 
+First the version of openAPI is provided which is 3.0.0. 
 
 ```yml
 openapi: 3.0.0
 ```
 
-We start with some basic infos that have the only purpose of providing a description
+We continue with some basic information that have the only purpose of providing a description to the user
 
 ```yml
 info:
@@ -1390,9 +1386,9 @@ Now we provide all the endpoints which are used as the flask route in the [previ
                 description: Success
 ```
 
-This snippet provides the endpoints _heartbeat_ and defines that is only has a _get_ method. There is one function to be called that we named _heartbeat_. Finally, we provide the response types possible where we only provided the 200 response which stands for a successful operation. 
+This snippet provides the endpoints _heartbeat_ and defines that is only has a _get_ method. There is one function to be called that we named _heartbeat_. Finally, we provide the security scheme and the response types where we only provided the 200 response which stands for a successful operation. 
 
-Let us have a look at the function _initialize_ that lives under the route _initialize_. 
+Let us have a look at the function _initialize_. 
 ```yml
 /initialize:
     post:
@@ -1428,8 +1424,8 @@ The remaining endpoints follow the same strategy and can be understood in the ve
 
 ## Dockerfile
 
-The SimPARTIX app is actually running within a docker container. [Docker](https://www.docker.com/) is a powerful tool to provide a well defined architecture with all necessary libraries. The docker file provided below is the instruction to build up a so called image in which all programs (such as python) and libraries (such as the python libraries) are defined. We build up this image based on a already present image that exist for SimPARTIX and which is hosted on the Fraunhofer own [docker image repository](ub.cc-asp.fraunhofer.de). 
-In this image, the libraries for SimPARTIX and ProPARTIX are already included such as numpy, pandas etc while applying the very same strategy as explained in this section. This is the reason for which they have not to be included again in the file [requirements.txt](#requirementstxt) again. If you are unfamiliar with docker, continue first with one of the vast options for docker tutorial. Docker has a steep learning curve though. 
+The SimPARTIX app is actually running within a docker container. [Docker](https://www.docker.com/) is a powerful tool to provide a well defined architecture with all necessary libraries. The docker file provided below is the instruction to build up a so called image in which all programs (such as python) and libraries (such as the python libraries) are defined. We build up this image based on an already present image that exist for SimPARTIX and which is hosted on the Fraunhofer own [docker image repository](ub.cc-asp.fraunhofer.de). 
+In this image, the libraries for SimPARTIX and ProPARTIX are already included such as numpy or pandas while applying the very same strategy as explained in this section. This is the reason for which they have not to be included again in the file [requirements.txt](#requirementstxt) again. If you are unfamiliar with docker, continue first with one of the vast options for docker tutorial. Docker has a steep learning curve though. 
 
 We provide the content of our docker file and describe its content afterwards
 
@@ -1460,7 +1456,7 @@ ENV PORT=5000
 CMD flask run --host=0.0.0.0 --port=${PORT}
 ```
 
-In a first step, we load the SimPARTIX image from the Fraunhofer repository to have a base with all functionalities available that are required by SimPARTIX and ProPARTIX. This however does not include the software itself, but only the libraries.
+In the first step, we load the SimPARTIX image from the Fraunhofer repository to have a base with all functionalities available that are already required by SimPARTIX and ProPARTIX. This however does not include the software itself, but only the libraries.
 In the following, we add the "simpartix" folder to the image (see again [here](#including-your-own-software)) as a git submodule. In the image, the simpartix folder is however called "source". We change into that directory and there into a "code" folder where we put out files with which the SimPARTIX binary is compiled. Calling "RUN make -j 4" compiles the SimPARTIX binary. Similarly, we change into the ProPARTIX folder and compile here the files that are necessary for the ProPARTIX engine. At this point, the SimPARTIX binary and ProPARTIX functions are all present. We then move into the folder "app" in which alle the services of the SimPARTIX app are going to be running. We create a new folder _simulation\_files_ and define the flask app and the port. Now the simpartix folder that includes the compiled SimPARTIX binary is added to the image as well as the _simulation\_controller_ folder in which all the controller python files are located. The folder static contains some images that is of less importance. We add the file _requirements.txt_ and install all the python libraries via pip. Finally, we add the file _app.py_, set the corresponding environment variables for flask and start the flask application. 
 
 
@@ -1514,11 +1510,11 @@ secrets:
 ```
 
 This files provides the following information 
-- the version number of the docker engine
-- the services which in this case is only the simpartix app. For each service, we must specify where docker can find the corresponding docker file. This is done by the keyword _build_ and the file is in this folder. 
-- the secrets for the client and the flask application. 
+- the version number of the docker engine to allow the correct functionality of docker compose. 
+- the services which in this case is only the simpartix app. For each service, we must specify where docker can find the corresponding docker file. This is done by the keyword _build_ and the docker file is already in this folder. We also specify that we need three secrets which are provided later in the file. Last but not least, the ports 8000 and 5000 are exposed. 
+- the location of the secrets that are required by the simpartix app application. 
 
-When having a docker compose yaml file within our directory, the only command we have to execute is 
+When having such a docker compose yaml file within our directory, the only command we have to execute is 
 ```bash
 docker-compose up
 ```
