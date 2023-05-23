@@ -808,7 +808,11 @@ After a check that the simulation has actually finished, the data in the _result
 
 ## app.py
 
-This is a function that is actually called. 
+This is a function that is actually called when building the docker image. 
+
+The handling of the web application is realized by flask which is a python libarary. Understanding this part requires profound knowledge on html and CSS. The build up of the webpage is not part of this tutorial. 
+
+We start with importing the main libraries
 
 ```python
 import json
@@ -816,7 +820,6 @@ import logging
 import mimetypes #dea file type
 import os
 from pathlib import Path
-
 from flask import Flask, Response, request
 
 from simulation_controller.simulation_manager import (
@@ -825,27 +828,30 @@ from simulation_controller.simulation_manager import (
 )
 ```
 
-In a first step, we load the main libraries. 
-mimetype
-flask 
-pathlib -> Path
 
-
-
-
-xxx
+It follows the common notation to create a flask instance and to how to provide the secret key. 
 
 ```python
-app = Flask(__name__) #dea
+app = Flask(__name__) 
 app.secret_key = FLASK_SECRET_KEY
+```
 
+We then create an object of the SimulationManger class. 
+
+```python
 simulation_manager = SimulationManager()
 ```
 
+In flask, the url route is provided with the _@app.route_ decorator as follow. We will hence see lines such as 
 
-It follows the "heartbeat" function. 
 ```python
-@app.route("/heartbeat") #dea
+@app.route("/")
+```
+
+throughout the script. This is required by flask to build up the webpage correctly. We start with the "heartbeat" function. 
+
+```python
+@app.route("/heartbeat")
 def heartbeat():
     return Response(
         "SimPARTIX-App : application running.",
@@ -853,12 +859,9 @@ def heartbeat():
         mimetype="text/plain",
     )
 ```
+This function is needed by the MarketPlace servers in order to check if the SimPARTIX app is still running or whether it got stopped. This function returns a flask response object with a string "SimPARTIX-App : application running" as text that will be displayed, a status of 200 which is the commonly accepted value that everything is okay. 
 
-This function can be used by the MarketPlace server in order to check if the SimPARTIX app is still running
-or whether it got stopped. This function returns a flask response object with a string "SimPARTIX-App : application running"
-as text that will be displayed, a status of 200 which is the commonly accepted value that everyting is okay. 
-
-xxx
+We continue with the function for a new simulation which is activated whenever the "submit" button it hit. 
 ```python
 @app.route("/initialize", methods=["POST"])
 def new_simulation() -> str:
@@ -877,8 +880,10 @@ def new_simulation() -> str:
         logging.error(msg)
         return Response(str(msg), status=400, mimetype="text/plain")
 ```
+This function retrieves the parameter set from the GUI that contains the values for laser power, laser speed and the geometry of the powder bed (this setting describes the simulation sufficiently). The "create_simulation" function from the simulation manager is called which was the SimPARTIX individual function to actually create all input files and the start configuration. Finally, errors are handled and the corresponding return types are defined. 
 
-xxx
+We continue with the function to update the simulation state. This function actually initiates running the simulation or stopping of a simulation. 
+
 ```python
 @app.route("/update/<transformation_id>", methods=["PATCH"])
 def update_simulation_state(transformation_id: str):
@@ -910,7 +915,7 @@ def update_simulation_state(transformation_id: str):
         return Response(msg, status=400)
 ```
 
-xxx
+The next function is used to retrieve the simulation state. This function simply calls the "get\_simulation\_state" function from the simulation manager and handles some commonly occurring error states. 
 
 ```python
 @app.route("/<transformation_id>/state", methods=["GET"])
@@ -927,15 +932,14 @@ def get_simulation_state(transformation_id: str):
         return Response(str(ke), status=404)
     except Exception as e:
         msg = (
-            "Unexpected error while querying for the status of simulation "
+            "Unexpected error while querying for the status of a simulation "
             f"{transformation_id}. Error message: {e}"
         )
         logging.error(msg)
         return Response(msg, status=400)
 ```
+The next function is used to retrieve a list of all simulations. This function, again, makes used of the core features provided in the simulation manager. 
 
-
-xx
 ```python
 @app.route("/", methods=["GET"])
 def get_simulation_list():
@@ -955,9 +959,8 @@ def get_simulation_list():
         logging.error(msg)
         return Response(msg, status=400)
 ```
+The next function "delete\_simulation" provides the interface to the "delete\_simulation" function of the simulation manager. 
 
-
-xxx
 ```python
 @app.route("/<transformation_id>", methods=["DELETE"])
 def delete_simulation(transformation_id: str):
@@ -981,7 +984,7 @@ def delete_simulation(transformation_id: str):
         return Response(msg, status=400)
 ```
 
-xxx
+There is also a function "get\_results" to call the "get\_simulation\_output" function of the simulation manager. 
 
 ```python
 @app.route("/datasets", methods=["GET"])
@@ -999,7 +1002,7 @@ def get_results():
     )
 ```
 
-xxx
+We have two functions related to ontologies to realize the level-2 integration of These are 
 
 ```python
 @app.route("/mappings", methods=["GET"])
@@ -1011,7 +1014,7 @@ def list_mappings():
     )
 ```
 
-xxx
+and
 
 ```python
 @app.route("/mappings/<semantic_mapping_id>", methods=["GET"])
@@ -1026,6 +1029,7 @@ def get_mapping(semantic_mapping_id: str):
     )
 
 ```
+to provide a list of all existing mapping and to retrieve one specific mapping. 
 
 The file ends with the following line of code
 
@@ -1047,7 +1051,9 @@ requests-oauthlib == 1.3.1
 DLite-Python == 0.3.9
 ```
 
-"Flask" is necessary for the web communication, "requests-oauthlib" handles the authorization and "DLite-Python" is a file format provided by Sintef to facilitate the communication of data between the software modules. 
+"Flask" is necessary for the web communication, "requests-oauthlib" handles the authorization and "DLite-Python" is a file format provided by Sintef to facilitate the communication of data between the software modules. Providing those libraries in this format allows to install specific libraries.  
+
+
 
 
 ## openAPI.yml
