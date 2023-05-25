@@ -1,6 +1,7 @@
-# The UC3 app – FlameSpray 
+# The UC3 app – FlameSpray
 
-## UC3 Introduction and Background 
+## UC3 Introduction and Background
+
 ## UC3 System User Guide
 
 This guide will walk you through the process of using the UC3 system, from installing AiiDA to running applications.
@@ -11,19 +12,19 @@ To start, you'll need to install AiiDA and set up the system. The following figu
 
 ![AiiDAlab homescreen](../_static/img/ucs/uc3/homescreen.png)
 
-*The AiiDAlab homescreen*
+_The AiiDAlab homescreen_
 
 The next step is to select and upload your SSH key.
 
 ![SSH key selection](../_static/img/ucs/uc3/Install_pt1.png)
 
-*Selecting the SSH key*
+_Selecting the SSH key_
 
 Finally, you'll need to install AiiDA and set up the system.
 
 ![AiiDA installation and setup](../_static/img/ucs/uc3/Install_pt2.png)
 
-*Installing AiiDA and setting up the system*
+_Installing AiiDA and setting up the system_
 
 ### Section 2: Running Application 1
 
@@ -31,31 +32,31 @@ Running Application 1 involves selecting the code and computer, inputting parame
 
 ![Selecting code and computer](../_static/img/ucs/uc3/Ap1_pt1.png)
 
-*Selecting the code and computer for Application 1*
+_Selecting the code and computer for Application 1_
 
 Next, select the inputs for the calculation.
 
 ![Input selection](../_static/img/ucs/uc3/Ap1_pt2.png)
 
-*Selecting inputs for Application 1*
+_Selecting inputs for Application 1_
 
 Confirm the inputs and make note of the UUID that you will need to email to the controller.
 
 ![Confirming inputs and UUID](../_static/img/ucs/uc3/Ap1_pt3.png)
 
-*Confirming inputs and noting the UUID*
+_Confirming inputs and noting the UUID_
 
 Monitoring the calculation.
 
 ![Viewing results](../_static/img/ucs/uc3/Ap1_pt4.png)
 
-*Viewing results for Application 1 in JSON format*
+_Viewing results for Application 1 in JSON format_
 
 Finally, view the results in JSON format.
 
 ![Viewing results](../_static/img/ucs/uc3/Ap1_pt5.png)
 
-*Viewing results for Application 1 in JSON format*
+_Viewing results for Application 1 in JSON format_
 
 ### Section 3: Running Application 2
 
@@ -63,7 +64,7 @@ The steps for running Application 2 are similar to those for Application 1, but 
 
 ![Viewing results for Application 2](../_static/img/ucs/uc3/Ap2_pt5.png)
 
-*Viewing results for Application 2*
+_Viewing results for Application 2_
 
 ### Section 4: Running Application 3
 
@@ -71,18 +72,17 @@ Finally, running Application 3 is almost identical to running Application 2. The
 
 ![Viewing results for Application 3](../_static/img/ucs/uc3/Ap3_pt5.png)
 
-*Viewing results for Application 3*
+_Viewing results for Application 3_
+
 ## UC3 System Implementation Guide
 
-
-The UC3 system provides a comprehensive interface for running Fluent software, allowing users to customize settings on a Marketplace frontend using an AiiDAlab instance. This document will guide you through the UC3 implementation process and its components. 
+The UC3 system provides a comprehensive interface for running Fluent software, allowing users to customize settings on a Marketplace frontend using an AiiDAlab instance. This document will guide you through the UC3 implementation process and its components.
 
 The unique UUID (Universally Unique Identifier) generated for each request establishes a communication channel between the user and the HPC system, ensuring compliance with licensing agreements. The system operates with JSON format for both input and output files, located at `/home/aiidawork/<UUID>` in the Digital Ocean droplet instance. AiiDA orchestrates the workflow, data, and calculations within the system.
 
 ![UC3 system implementation diagram](../_static/img/ucs/uc3/schematic_of_system_implementation.png)
 
-*UC3 system implementation diagram. A user sets parameters through an AiiDAlab instance on the marketplace frontend. The frontend generates an input file with user settings and a UUID for the job. Input data is sent to a Digital Ocean droplet via ssh. The user provides the UUID to a SINTEF controller, who initiates the job while adhering to licensing. A SINTEF bash script (_submit.sh) uses the UUID to fetch inputs, run Fluent, and return results via ssh. The wait_watch.sh script, activated by AiiDA, monitors progress and retrieves output. AiiDA manages the UC3 workflow, data, and calculations. JSON files are in the /home/aiidawork/<UUID> on the droplet instance.*
-
+_UC3 system implementation diagram. A user sets parameters through an AiiDAlab instance on the marketplace frontend. The frontend generates an input file with user settings and a UUID for the job. Input data is sent to a Digital Ocean droplet via ssh. The user provides the UUID to a SINTEF controller, who initiates the job while adhering to licensing. A SINTEF bash script (\_submit.sh) uses the UUID to fetch inputs, run Fluent, and return results via ssh. The wait_watch.sh script, activated by AiiDA, monitors progress and retrieves output. AiiDA manages the UC3 workflow, data, and calculations. JSON files are in the /home/aiidawork/<UUID> on the droplet instance._
 
 ### System Components
 
@@ -93,10 +93,11 @@ The UC3 system comprises four main components:
 2. **Data server (Digital Ocean droplet):** This server stores input files and outputs. Communication with the frontend happens via ssh. JSON input and output files are placed at `/home/aiidawork/<UUID>` in the droplet instance. The `wait_watch.sh` script, invoked by AiiDA, monitors calculation progress and retrieves the output file upon generation.
 
 3. **HPC cluster (SINTEF):** Fluent calculations are executed based on user inputs provided in the input files generated by the frontend. Essential scripts and tools used on the HPC side include:
-   * `_submit.sh`: Submits the job to the HPC cluster, runs Fluent calculations, and handles file transfers.
-   * `flame_spray_launcher.sh`: Launches the job for the flame spray application.
-   * `uc3wrapper.py`: Generates a Fluent input file based on user inputs.
-   * `uc3_parser.py`: Parses Fluent calculation results into the output JSON file.
+
+   - `_submit.sh`: Submits the job to the HPC cluster, runs Fluent calculations, and handles file transfers.
+   - `flame_spray_launcher.sh`: Launches the job for the flame spray application.
+   - `uc3wrapper.py`: Generates a Fluent input file based on user inputs.
+   - `uc3_parser.py`: Parses Fluent calculation results into the output JSON file.
 
 4. **Human controller:** A SINTEF employee who initiates calculations to comply with licensing agreements. Users manually send the UUID via email to the controller to start the job on the SINTEF side.
 
