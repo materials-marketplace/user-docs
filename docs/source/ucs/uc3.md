@@ -1,6 +1,77 @@
 # The UC3 app – FlameSpray 
-## (Some other section here) 
 
+## UC3 Introduction and Background 
+## UC3 System User Guide
+
+This guide will walk you through the process of using the UC3 system, from installing AiiDA to running applications.
+
+### Section 1: Installation and Setup
+
+To start, you'll need to install AiiDA and set up the system. The following figures illustrate the steps you should follow.
+
+![AiiDAlab homescreen](../_static/img/ucs/uc3/homescreen.png)
+
+*The AiiDAlab homescreen*
+
+The next step is to select and upload your SSH key.
+
+![SSH key selection](../_static/img/ucs/uc3/Install_pt1.png)
+
+*Selecting the SSH key*
+
+Finally, you'll need to install AiiDA and set up the system.
+
+![AiiDA installation and setup](../_static/img/ucs/uc3/Install_pt2.png)
+
+*Installing AiiDA and setting up the system*
+
+### Section 2: Running Application 1
+
+Running Application 1 involves selecting the code and computer, inputting parameters, confirming the inputs and sending the UUID via email, and finally viewing the results.
+
+![Selecting code and computer](../_static/img/ucs/uc3/Ap1_pt1.png)
+
+*Selecting the code and computer for Application 1*
+
+Next, select the inputs for the calculation.
+
+![Input selection](../_static/img/ucs/uc3/Ap1_pt2.png)
+
+*Selecting inputs for Application 1*
+
+Confirm the inputs and make note of the UUID that you will need to email to the controller.
+
+![Confirming inputs and UUID](../_static/img/ucs/uc3/Ap1_pt3.png)
+
+*Confirming inputs and noting the UUID*
+
+Monitoring the calculation.
+
+![Viewing results](../_static/img/ucs/uc3/Ap1_pt4.png)
+
+*Viewing results for Application 1 in JSON format*
+
+Finally, view the results in JSON format.
+
+![Viewing results](../_static/img/ucs/uc3/Ap1_pt5.png)
+
+*Viewing results for Application 1 in JSON format*
+
+### Section 3: Running Application 2
+
+The steps for running Application 2 are similar to those for Application 1, but instead of a JSON output, you will receive a figure.
+
+![Viewing results for Application 2](../_static/img/ucs/uc3/Ap2_pt5.png)
+
+*Viewing results for Application 2*
+
+### Section 4: Running Application 3
+
+Finally, running Application 3 is almost identical to running Application 2. The following figure illustrates the results you should expect.
+
+![Viewing results for Application 3](../_static/img/ucs/uc3/Ap3_pt5.png)
+
+*Viewing results for Application 3*
 ## UC3 System Implementation Guide
 
 
