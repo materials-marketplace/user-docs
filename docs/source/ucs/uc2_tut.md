@@ -1,11 +1,16 @@
 # The UC2 app – Paste levelling
-Use case 2 involves simulating viscoelastic pastes used in screen printing for solid oxide fuel cells. 
-Figure 1 illustrates the entire screen-printing process.
+Use case 2 involves simulating viscoelastic pastes used in screen printing for solid oxide fuel cells 
+with the objective to develop a simulation workflow to examine numerically the impact of paste properties 
+on the printed image to evaluate its quality. 
+The screen-printing process consists of several steps, shown in Figure 1. The first part of the process 
+comprises the mesh filling (steps 1 – 3), followed by the printing step (step 4), where the paste is 
+transferred to the substrate. The last step describes the levelling (step 5), where the material flow 
+gradually stops resulting in the final structure (surface waviness and line width).
 
 ![UC2_app|500x300](../_static/img/ucs/uc2/levelling_process.png)
 **Figure 1**: _Description of the screen printing process._
 
-The viscoelastic material in question is highly complex, exhibiting nonlinear behavior. Simulating each step of the process incurs significant computational costs. Consequently, the application exclusively focuses on the levelling stage of screen printing.The levelling stage plays a crucial role in determining the final print quality by influencing the spread of the paste, an essential parameter.
+The viscoelastic material in question is highly complex, exhibiting nonlinear behavior. Simulating each step of the process incurs significant computational costs. Consequently, the application exclusively focuses on the levelling stage of screen printing. The levelling stage plays a crucial role in determining the final print quality by influencing the spread of the paste, an essential parameter.
 The spread of the paste is heavily influenced by its properties. Therefore, simulating the levelling process is ideal for testing different pastes and identifying their optimal properties while minimizing the need for extensive experimentation.
 The Paste Levelling App requires input files containing experimental rheometer data for various pastes. It outputs a measurement of paste broadening and provides comparison plots between experimental and simulated rheometer data as intermediate results.
 
@@ -65,13 +70,13 @@ This step uses a REST API to communicate with the MarketPlace platform and the H
 The graphical user interface is handled via Flask, a Python-based web application framework. 
 
 
-## How ro run th app
+## How ro run the app
 When you open the app you will be presented by the following screen
 
 ![UC2_app|500x300](../_static/img/ucs/uc2/initial.png)
 
 
-To begin using the app,  click on the "Paste broadening simulation" button.
+To begin using the app, click on the "Paste broadening simulation" button.
 
 ### Preparation
 
