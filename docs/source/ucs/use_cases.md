@@ -50,5 +50,3 @@ Below we give a more prosaic overview of each of the use cases.
 
 <img src="../\_static/img/ucs/uc_impl/uc6-01.png" width="40%" height="40%" >
 <br><br>
-
-
