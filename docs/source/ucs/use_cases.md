@@ -11,7 +11,6 @@ To deomonstrate industrially relevant use of the MarketPlace plattform a total o
 
 Implementation details for each use case can be found by clicking the individual links.
 
-
 All use cases, except the last, consist of at least two independent software programs where the output from one program forms part of the input to the second program. The software programs/tools used are all general purpose programs which can to some extent be customized and adopted further. Ideally, every relevant state or models would be syntactically described and accessible through an open API. However, this is rearly the case, and some cases may need bespoke customization to solve a particular problem. Thus, it would be a formiddable task to expose the entire user accessible/modifiable user interface. Instead the approach taken at this stage in the MarketPlace platform development is for experts to set up and configure these solvers for each solver in the use cases. For tested and validated use cases the end user is presented with a set of relevant parameters that can be changed by the user through a RestAPI. This is illustrated in schematic below where three codes are executed in series with all three codes contributing to the output layer:
 <br>
 <br>
@@ -19,6 +18,7 @@ All use cases, except the last, consist of at least two independent software pro
 <br>
 <br>
 Below we give a more prosaic overview of each of the use cases.
+
 <table>
   <tr> <th> Use Case Description </th> <th> Illustration </th> </tr>
   <tr>
@@ -28,7 +28,9 @@ Below we give a more prosaic overview of each of the use cases.
 ```
   Executing patners: MTU, Fraunhofer, ACCESS, ANSYS-Granta, EPFL
 ```
+
 Short description
+
 </td>
 <td>
       <img src="../\_static/img/ucs/uc_impl/uc1-01.png" width="350px"    >
@@ -45,6 +47,7 @@ Short description
 ```
 
 Short description
+
 </td>
 <td>
       <img src="../\_static/img/ucs/uc_impl/uc2-01.png" width="350px"    >
@@ -59,8 +62,8 @@ Short description
   Executing patners: Johnson Matthey, Lurredera, SINTEF, ANSYS-Granta
 ```
 
-
 Short description
+
 </td>
 <td>
       <img src="../\_static/img/ucs/uc_impl/uc3-01.png" width="350px"    >
@@ -75,8 +78,8 @@ Short description
   Executing patners: HES, DCS, ANSYS-Granta
 ```
 
-
 Short description
+
 </td>
 <td>
       <img src="../\_static/img/ucs/uc_impl/uc4-01.png" width="350px"    >
@@ -91,8 +94,8 @@ Short description
   Executing patners: Crystalsol, UCL
 ```
 
-
 Short description
+
 </td>
 <td>
       <img src="../\_static/img/ucs/uc_impl/uc5-01.png" width="350px"    >
@@ -107,8 +110,8 @@ Short description
   Executing patners: MBN, Fraunhofer
 ```
 
-
 Short description
+
 </td>
 <td>
       <img src="../\_static/img/ucs/uc_impl/uc6-01.png" width="350px"    >
