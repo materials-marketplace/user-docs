@@ -73,6 +73,7 @@ jupyter/sdk.ipynb
 apps/registration
 apps/sub_apps
 apps/message_broker
+jupyter/hpc-sdk.ipynb
 apps/update
 ```
 

@@ -30,7 +30,6 @@ extensions = [
     "IPython.sphinxext.ipython_console_highlighting",  # nb syntax highlight
     "sphinx.ext.autosectionlabel",  # Auto-generate section labels.
     "sphinx_panels",  # Panels in a grid layout or as drop-downs
-    "sphinx_markdown_tables",
     "sphinxcontrib.redoc",  # Render OpenAPI with redoc
 ]
 
