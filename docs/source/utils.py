@@ -3,8 +3,8 @@ import os
 
 from urllib.request import urlopen
 
-api_version = "0.3.0"
-version = "1.5.0-beta"
+api_version = "0.4.0"
+version = "1.8.0-beta"
 
 capability_table_header = (
     "| Type | Method | Capability | Description |",

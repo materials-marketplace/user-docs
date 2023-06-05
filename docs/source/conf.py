@@ -7,7 +7,7 @@ from utils import get_api, source_read_handler, version
 
 # Project information
 project = "MarketPlace"
-copyright = "2022, all rights reserved"
+copyright = "2023, all rights reserved"
 author = "The MarketPlace Consortium"
 release = version
 
