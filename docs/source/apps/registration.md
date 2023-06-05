@@ -47,13 +47,7 @@ For security reasons, the `client_secret` will not be shown again. Store it some
 Next, a platform admin should approve the registration.
 In the meantime, make sure that your application server is running and can be reached.
 
-## 3. Link application
-
-Once the application has been approved, it will be available for linking in the _Link_ section of the admin console.
-
-![Link the application](../_static/img/app_registration/link.png)
-
-Now the application information should be available in the _Summary_.
+Once the application has been approved, the application information should be available in the _Summary_.
 
 ![Application Dashboard](../_static/img/app_registration/summary.png)
 
@@ -61,7 +55,7 @@ To be able to use the application, one of the products should be purchased on th
 
 ![Purchasing a product](../_static/img/app_registration/pricing.png)
 
-## 4. Test application
+## 3. Test application
 
 You can directly test the communication with the newly registered application via MarketPlace on the _Swagger viewer_.
 The endpoints shown there are directly generated based on the uploaded openAPI file.
