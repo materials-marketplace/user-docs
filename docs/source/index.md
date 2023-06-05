@@ -12,24 +12,28 @@ _These docs are compatible with version `{platform_version}` of the platform._
 
 :::{grid-item-card} Introduction
 :columns: 5
+:text-align: center
 :link: intro.html
 General information about the Marketplace
 :::
 
 :::{grid-item-card} Application capabilities
 :columns: 5
+:text-align: center
 :link: apps/capabilities.html
 The list of capabilities supported by the MarketPlace
 :::
 
 :::{grid-item-card} Application registration
 :columns: 5
+:text-align: center
 :link: apps/registration.html
 How can you add your own application to MarketPlace?
 :::
 
 :::{grid-item-card} Support
 :columns: 5
+:text-align: center
 :link: support.html
 Need help?
 :::
