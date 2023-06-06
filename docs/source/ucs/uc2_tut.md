@@ -68,7 +68,7 @@ The graphical user interface is handled via Flask, a Python-based web applicatio
 
 ## How to run the app
 
-When you open the app you will be presented by the following screen
+When you open the app you will be presented with the following screen
 
 ![UC2_app|500x300](../_static/img/ucs/uc2/initial.png)
 
