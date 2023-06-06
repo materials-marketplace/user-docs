@@ -9,7 +9,7 @@ This app takes unbalanced chemical equations as input and generates the correspo
 
 ### Inputs
 
-When you open the app you will be presented by the following screen
+When you open the app you will be presented with the following screen
 
 ![cb_app|200x100](../_static/img/ucs/standalone_apps/balancer_input.png)
 
