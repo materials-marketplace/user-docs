@@ -3,7 +3,7 @@
 ## Description
 
 This app calculates the strength of a weld based on user-provided parameters.
-The user select the desired weld type, and the relevant parameters such as weld throat thickness and effective length.
+The user selects the desired weld type, and the relevant parameters such as weld throat thickness and effective length.
 
 Depending on the selected weld type and load configuration, the function calculates and displays the corresponding stress values.
 
