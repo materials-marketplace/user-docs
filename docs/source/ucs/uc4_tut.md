@@ -49,10 +49,10 @@ As mentioned above two additional tools are required for data transistion betwee
 Currently, the user must run both tools locally.
 
 ## How ro run the Aspherix-app
+
 When you open the app you will be presented by the following screen
 
 ![uc4_standalone|500x300](../_static/img/ucs/uc4/uc4_index.png)
-
 
 To begin using the app, click on the "Mixing" button.
 
@@ -62,14 +62,12 @@ On the next page you need to define the simulation parameters.
 
 ![uc4_standalone|500x300](../_static/img/ucs/uc4/uc4_configuration.png)
 
-
 The parameters are described in more detail below:
 
-
-* **Radius 1**: Radius of first particle group. (Ceramic)
-* **Radius 2**: Radius of second particle group. (Polymer)
-* **Mixer period**: Period for one full rotation of the mixer.
-* **Number of mixer rotations**: Number of full rotations of the mixer that should be simulated. This defines the total simulation duration.
+- **Radius 1**: Radius of first particle group. (Ceramic)
+- **Radius 2**: Radius of second particle group. (Polymer)
+- **Mixer period**: Period for one full rotation of the mixer.
+- **Number of mixer rotations**: Number of full rotations of the mixer that should be simulated. This defines the total simulation duration.
 
 Once everything is set, you can click on the `Setup simulation` button.
 
@@ -77,29 +75,22 @@ Once everything is set, you can click on the `Setup simulation` button.
 
 A screen summarizing the simulation settings will appear, along with an option to run the simulation:
 
-
 ![uc4_standalone|500x300](../_static/img/ucs/uc4/uc4_run_simulation.png)
 
-
-when you click on the *Run simulation*, you will see the *Simulation Status* change from *CREATED* to *INPROGRESS*
-
+when you click on the _Run simulation_, you will see the _Simulation Status_ change from _CREATED_ to _INPROGRESS_
 
 ![uc4_standalone|500x300](../_static/img/ucs/uc4/uc4_inprogress.png)
 
-
-click on the *Refresh status* button, until the *Simulation Status* change from *INPROGRESS* to *COMPLETED*, 
-
+click on the _Refresh status_ button, until the _Simulation Status_ change from _INPROGRESS_ to _COMPLETED_,
 
 ![uc4_standalone|500x300](../_static/img/ucs/uc4/uc4_download.png)
 
 ### Results
 
-When a simulation is completed you will be offered to download the results via *Dowload Simulation*.
-
+When a simulation is completed you will be offered to download the results via _Dowload Simulation_.
 
 #### Download results
-If you click on *Dowload Simulation*, you will see the screen below, which allows you to dowload the simualtion data and results.
 
+If you click on _Dowload Simulation_, you will see the screen below, which allows you to dowload the simualtion data and results.
 
 ![uc4_standalone|500x300](../_static/img/ucs/uc4/uc4_download_2.png)
-
