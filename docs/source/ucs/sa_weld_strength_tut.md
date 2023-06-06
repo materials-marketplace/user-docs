@@ -37,7 +37,7 @@ After processing the input, the app will present you with the results. The outpu
 
 ![ws_app|200x100](../_static/img/ucs/standalone_apps/weld_output_1.png)
 
-In this screen, you have a summary of your imputs. togheter witht the resulting stress.
+In this screen, you have a summary of your inputs together with the resulting stress.
 
 If in the previous section you had chosen to compute the stress for a fillet weld, this is the result page you would have had
 ![ws_app|200x100](../_static/img/ucs/standalone_apps/weld_output_2.png)
