@@ -94,7 +94,7 @@ Let us have a look at the following files that are all found in the folder "simu
 ### \_\_init\_\_.py
 
 The file "\_\_init\_\_.py" is an empty file and its only purpose is that python allows to include all function via the regular
-package syntax as libraries. This means in all files, we can include classes and function of other files with simple commands. Usually, python has no problem to import a whole directory. But when it comes to importing a class from a file in a directory, this will raise an exception. But having such a "\_\_init\_\_.py" file allows to use the following notation
+package syntax as libraries. This means in all files, we can include classes and function of other files with simple commands. Usually, python has no problem importing a whole directory. But when it comes to importing a class from a file in a directory, this will raise an exception. But having such a "\_\_init\_\_.py" file allows to use the following notation
 
 ```python
 from directory.filename import classname
