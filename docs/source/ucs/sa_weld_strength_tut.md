@@ -14,7 +14,7 @@ For fillet welds, it calculates the strength based on different fillet weld conf
 
 ### Inputs
 
-When you open the app you will be presented by the following screen
+When you open the app you will be presented with the following screen
 
 ![ws_app|200x100](../_static/img/ucs/standalone_apps/weld_input_1.png)
 
