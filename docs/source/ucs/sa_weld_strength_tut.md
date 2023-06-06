@@ -29,7 +29,7 @@ Once the butt weld type is selected you have to select a configuration to help y
 
 As an example let's select the twist case with a torque of 1000 N.
 
-A this point you only have to click on compute.
+At this point you only have to click on compute.
 
 ### Results
 
