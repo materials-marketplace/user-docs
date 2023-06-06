@@ -22,7 +22,7 @@ You have to select the type of weld to calculate (butt weld or fillet weld), and
 
 ![ws_app|200x100](../_static/img/ucs/standalone_apps/weld_input_2.png)
 
-Here we selct the butt weld, weld throat thickness of 2 mm and effective length of the weld of 2 mm.
+Here we select the butt weld, weld throat thickness of 2 mm and effective length of the weld of 2 mm.
 Once the butt weld type is selected you hav to select a configuration, to hel you decide the app shows a image depicting the available possibilities.
 
 ![ws_app|200x100](../_static/img/ucs/standalone_apps/weld_input_3.png)
