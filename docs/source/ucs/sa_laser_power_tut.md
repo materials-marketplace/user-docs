@@ -8,7 +8,7 @@ The Laser power app is a Python application that calculates various laser power-
 
 ### Inputs
 
-When you open the app you will be presented by the following screen
+When you open the app you will be presented with the following screen
 
 ![laser_app|200x100](../_static/img/ucs/standalone_apps/laser_inputs.png)
 
