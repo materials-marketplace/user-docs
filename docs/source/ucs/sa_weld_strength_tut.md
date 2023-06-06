@@ -1,14 +1,14 @@
 # Standalone app: Weld strength
 
 ## Description
-This app  calculates the strength of a weld based on user-provided parameters. 
-The user select the desired weld type, and the relevant parameters such as weld throat thickness and effective length. 
 
-Depending on the selected weld type and load configuration, the function calculates and displays the corresponding stress values. 
+This app calculates the strength of a weld based on user-provided parameters.
+The user select the desired weld type, and the relevant parameters such as weld throat thickness and effective length.
 
-For butt welds, it considers various load scenarios such as tensile, shear, bending, and twisting. 
-For fillet welds, it calculates the strength based on different fillet weld configurations. 
+Depending on the selected weld type and load configuration, the function calculates and displays the corresponding stress values.
 
+For butt welds, it considers various load scenarios such as tensile, shear, bending, and twisting.
+For fillet welds, it calculates the strength based on different fillet weld configurations.
 
 ## How ro run the app
 
@@ -33,7 +33,7 @@ A this point you only have to click on compute.
 
 ### Results
 
-After processing the input, the  app will present you with the results. The output will be displayed as follows:
+After processing the input, the app will present you with the results. The output will be displayed as follows:
 
 ![ws_app|200x100](../_static/img/ucs/standalone_apps/weld_output_1.png)
 
@@ -41,5 +41,3 @@ In this screen, you have a summary of your imputs. togheter witht the resulting 
 
 If in the previous section you had chosen to compute the stress for a fillet weld, this is the result page you would have had
 ![ws_app|200x100](../_static/img/ucs/standalone_apps/weld_output_2.png)
-
-
