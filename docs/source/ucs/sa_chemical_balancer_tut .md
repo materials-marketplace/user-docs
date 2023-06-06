@@ -16,7 +16,7 @@ When you open the app you will be presented with the following screen
 On this screen, you will find the necessary fields to input the chemical equation you wish to balance. The interface provides the following sections:
 
 - **Reactants**: Here, you can enter the chemical substances that act as the starting materials or reactants in the reaction. Simply input the relevant compounds or elements in this section.
-- **Productsr**: This section allows you to input the chemical substances that are formed as a result of the reaction. Enter the products of the reaction in this field.
+- **Products**: This section allows you to input the chemical substances that are formed as a result of the reaction. Enter the products of the reaction in this field.
 
 ### Results
 
