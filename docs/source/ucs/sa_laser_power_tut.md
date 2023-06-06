@@ -4,7 +4,7 @@
 
 The Laser power app is a Python application that calculates various laser power-related parameters based on user input. It allows users to provide input values for frequency, beam diameter, pulse energy, and pulse width, and then computes and displays the corresponding power and power density values. The app also provides a plot of the laser power profile over time.
 
-## How ro run the app
+## How to run the app
 
 ### Inputs
 
