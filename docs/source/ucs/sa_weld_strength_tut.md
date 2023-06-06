@@ -27,7 +27,7 @@ Once the butt weld type is selected you have to select a configuration to help y
 
 ![ws_app|200x100](../_static/img/ucs/standalone_apps/weld_input_3.png)
 
-As a example let's select the twist case with a torque of 1000 N.
+As an example let's select the twist case with a torque of 1000 N.
 
 A this point you only have to click on compute.
 
