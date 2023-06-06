@@ -95,7 +95,7 @@ In the lower part of the screen you need to define the simulation parameters.
 The parameters are described in more detail below:
 
 - **Final time**: This parameter sets the duration of the simulation, starting from time 0. The simulation will run until the final time is reached.
-- **Simulation deltaT**: his parameter sets the time step used in the simulation. A smaller time step will result in a more accurate simulation, but will require more computational resources.
+- **Simulation deltaT**: This parameter sets the time step used in the simulation. A smaller time step will result in a more accurate simulation, but will require more computational resources.
 - **Upward velocity**: This parameter sets the upward velocity induced by the grid being lifted. The velocity is depicted in the figure below, and is a key factor in the rheometer simulation.
 - **writeinterval**: This parameter determines how often the simulation values will be saved. It must be larger than the time step.
 - **Initial paste wide**: This parameter sets the initial size of the deposed paste. This is also depicted in the figure below, and is an important input for the simulation..
