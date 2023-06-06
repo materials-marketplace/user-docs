@@ -10,7 +10,7 @@ Depending on the selected weld type and load configuration, the function calcula
 For butt welds, it considers various load scenarios such as tensile, shear, bending, and twisting.
 For fillet welds, it calculates the strength based on different fillet weld configurations.
 
-## How ro run the app
+## How to run the app
 
 ### Inputs
 
