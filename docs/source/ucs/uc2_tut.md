@@ -76,7 +76,7 @@ To begin using the app, click on the "Paste broadening simulation" button.
 
 ### Preparation
 
-You will be presented the app interface where you can enter all the quantity you need for your case.
+You will be presented with the app interface where you can enter all the quantity you need for your case.
 
 ![UC2_app|500x300](../_static/img/ucs/uc2/rheometer_image.png)
 
