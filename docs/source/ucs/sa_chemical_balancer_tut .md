@@ -5,7 +5,7 @@
 The chemical balancer app is a Python application that allows users to balance chemical reactions.
 This app takes unbalanced chemical equations as input and generates the corresponding balanced equation as output.
 
-## How ro run the app
+## How to run the app
 
 ### Inputs
 
