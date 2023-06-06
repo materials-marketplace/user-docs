@@ -66,7 +66,7 @@ This step uses a REST API to communicate with the MarketPlace platform and the H
 
 The graphical user interface is handled via Flask, a Python-based web application framework.
 
-## How ro run the app
+## How to run the app
 
 When you open the app you will be presented by the following screen
 
