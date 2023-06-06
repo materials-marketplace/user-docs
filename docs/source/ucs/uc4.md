@@ -17,7 +17,7 @@ Everything is organized within one folder and we will slowly go through each fol
 ## Create a singularity container
 
 To run Aspherix or Lammps on the HPC resources an singularity container is required.
-Therefore, we use an singularity definition file. For the first version of the 
+Therefore, we use an singularity definition file. For the first version of the
 HPC App that is doing the resource management in the background Mpich 3.1.4 was
 required. Below the definition file for Aspherix is shown. Basically the container
 is an Ubuntu 20.04 system with Mpich 3.1.4 and Aspherix 5.4.1 installed without
@@ -61,7 +61,7 @@ Stage: build
     rm /opt/DCS-Computing/Aspherix-5.4.1/share/aspherix/*.lic
     # clean system
     rm /opt/AspherixInstallScript_5.4.1.sh /opt/Installer-Aspherix_Linux_5.4.1
-    
+
 %runscript
     echo "Container was created $NOW"
     echo "Arguments received: $*"
@@ -70,6 +70,7 @@ Stage: build
 ```
 
 Once the Singularity definition file has all you need, you can create a container
+
 ```bash
   $ sudo singularity build aspherix_no_license_mpich314.sif aspherix_no_license_mpich314.def
 ```
@@ -78,9 +79,10 @@ This container can be run anywhere with a valid Singularity installation.
 
 ## simulation controller
 
-Now we are working on the folder "simulation_controller" which contains several files that provide the function to create, start and stop a simulation as well as retrieving the simulation results. 
+Now we are working on the folder "simulation_controller" which contains several files that provide the function to create, start and stop a simulation as well as retrieving the simulation results.
 
 Let us have a look at the following files that are all found in the folder "simulation_controller"
+
 - \_\_init\_\_.py
 - config.py
 - aspherix_files_creation.py
@@ -90,10 +92,9 @@ Let us have a look at the following files that are all found in the folder "simu
 - simulation_hpc.py
 - (simulation_local.py) - just for local development and testing
 
-
 ### \_\_init\_\_.py
 
-The file "\_\_init\_\_.py" is an empty file and its only purpose is that python allows to include all function via the regular 
+The file "\_\_init\_\_.py" is an empty file and its only purpose is that python allows to include all function via the regular
 package syntax as libraries. This means in all files, we can include classes and function of other files with simple commands. Usually, python has no problem to import a whole directory. But when it comes to importing a class from a file in a directory, this will raise an exception. But having such a "\_\_init\_\_.py" file allows to use the following notation
 
 ```python
@@ -102,10 +103,10 @@ from directory.filename import classname
 
 when having a class "classname" in a file "filename" within the directoy "directory".
 
-
 ### config.py
 
 In this file, we have defined two classes with names "SimulationStatus" and "SimulationConfig" and follows with the definition for the simulation states. Here, we define 6 different kinds of states that are
+
 - created
 - running
 - completed
@@ -114,6 +115,7 @@ In this file, we have defined two classes with names "SimulationStatus" and "Sim
 - error
 
 the class structure looks as follow
+
 ```python
 import logging
 from enum import Enum
@@ -125,25 +127,31 @@ class SimulationStatus(Enum):
     DOWNLOADED = 5
     ERROR = 6
 ```
+
 By writing "Enum" into the bracket, this class in heriting from the Enum class which is a built-in class from python. This allows to use a more natural syntax to ask the script whether the simulation has been created or whether it is running. In fact, we can apply the following notation
+
 ```python
 state = SimulationStatus.CREATED # which is equal to "CREAETD"
 # and then ask for that state by
 if state == SimulationStatus.CREATED:
     print('simulation has been created')
 ```
-which is a readable syntax to ask for the state of a simulation. The logging module at the beginning of the snippet 
+
+which is a readable syntax to ask for the state of a simulation. The logging module at the beginning of the snippet
 is a python in-built library that simplifies to write log files in which error messages are written to. This allows for example to write error messages
 
 ```python
 logging.error("This is my error message")
 ```
+
 or info messages
+
 ```python
 logging.info("This is my info message")
 ```
 
 It follows the simulation configuration
+
 ```python
 class SimulationConfig:
     def __init__(self, request_obj: dict):
@@ -168,32 +176,37 @@ class SimulationConfig:
             raise ValueError(err_msg)
         self.creation_time = time.time()
 ```
+
 This is a class that contains only an init method. This is the function that is
 called whenever an instant of the SimulationConfig class is created. Basically,
-this function receives the input parameters that are made available for the Use 
+this function receives the input parameters that are made available for the Use
 Case tutorial. These were
-- Radius of particle type "1" (m) 
-- Radius of particle type "2" (m) 
+
+- Radius of particle type "1" (m)
+- Radius of particle type "2" (m)
 - Period of one mixer rotation (s)
 - Number of rotations (-)
 
-At the beginning, each of the keys from this dictionary is called and in the 
-case that this key has not been defined, a default is being returned. For 
+At the beginning, each of the keys from this dictionary is called and in the
+case that this key has not been defined, a default is being returned. For
 example the code line
+
 ```python
 self.configuration: int = request_obj.get("configuration", 1)
 ```
-asks if there is a key with the name "configuration" in the dictionary "request_obj".
-If the key is present, its value is returned (that is the value that the user 
-has provided in the MarketPlace interface - to be explained later). If the key
-has not been defined, we use the default value of "1". This value for the 
-configuration is mapped to an integer and stored in the variable "self.configuration"
-to make it available within the instant of the SimulationConfig object. 
 
-The same procedure is done for the other parameters. Additionally, we applied 
-some checks to make sure the user input variables are in a physically valid range. 
+asks if there is a key with the name "configuration" in the dictionary "request_obj".
+If the key is present, its value is returned (that is the value that the user
+has provided in the MarketPlace interface - to be explained later). If the key
+has not been defined, we use the default value of "1". This value for the
+configuration is mapped to an integer and stored in the variable "self.configuration"
+to make it available within the instant of the SimulationConfig object.
+
+The same procedure is done for the other parameters. Additionally, we applied
+some checks to make sure the user input variables are in a physically valid range.
 
 Additionaly, the file also contains the following two lines of code
+
 ```python
 # Global Constant to define the extension of zip files
 ZIP_EXTENSION = "zip"
@@ -201,24 +214,23 @@ ZIP_EXTENSION = "zip"
 # Global constant to define the path of the folder where all the simulations are saved
 SIMULATIONS_FOLDER_PATH = "/app/simulation_files"
 ```
-Which could also occur somewhere else and define global constants which are the 
-folder path in which all simulation results are about to appear and the extension 
-for the compression. 
 
+Which could also occur somewhere else and define global constants which are the
+folder path in which all simulation results are about to appear and the extension
+for the compression.
 
 ### aspherix_files_creation.py
 
 This file contains one function needed to create the simulation file, namely
 "create_input_files". This function copies Aspherix (or Lammps) input files
-(from the sub-diretory "templates") and replaces the placeholder with the 
-user-defined values. Additionally all required mesh files, submit files and 
-license files are copied into the simulation directory in order to prepare a 
+(from the sub-diretory "templates") and replaces the placeholder with the
+user-defined values. Additionally all required mesh files, submit files and
+license files are copied into the simulation directory in order to prepare a
 complete simulation setup.
-
 
 ### simulation_manager.py
 
-This script is designed as the interface between the MarketPlace and the simulation. 
+This script is designed as the interface between the MarketPlace and the simulation.
 
 ```python
 class SimulationManager:
@@ -337,8 +349,9 @@ class SimulationManager:
 ```
 
 ### simulation_base.py
-This file contains the base class SimulationBase for managing a single simulation. 
-It provides methods for starting a simulation, stopping it, zipping the output 
+
+This file contains the base class SimulationBase for managing a single simulation.
+It provides methods for starting a simulation, stopping it, zipping the output
 files, and deleting the simulation. The class also has a property for retrieving the status of the simulation. This is the base for "SimulationHPC" and "SimulationLocal", where
 later is designed only for local development purposes.
 
@@ -391,9 +404,11 @@ class SimulationBase:
     def delete(self):
         ...
 ```
+
 ### simulation_hpc.py
 
 This file define a class "SimulationHPC" that inherit from the "SimulationBase" and uses the Marketplace hpc app to set up a calculation on a remote server.
+
 ```python
 from simulation_controller.simulation_base import SimulationBase
 from simulation_controller.config import (
@@ -434,6 +449,7 @@ class SimulationHPC(SimulationBase):
             f"Simulation '{self.job_id}' with " f"configuration {request_obj} created."
         )
 ```
+
 in the "hpc.create_job" we indicate the path where the singularity container we have created in the first section is stored, together with the "submit.sh" which is a bash script thet execute all the simulation step.
 
 Inside the "run" method of the "SimulationHPC" class we find
@@ -446,15 +462,18 @@ Inside the "run" method of the "SimulationHPC" class we find
     self.status = SimulationStatus.INPROGRESS
     logging.info(f"Simulation '{self.job_id}' started successfully.")
 ```
+
 which shows how to upload file on the server and launch a job.
 
 Inside the "zip_output" there is a example of how to download file created by the simulation.
+
 ```python
-   
+
    # download what we need
    with open(os.path.join(outputPath,"log_aspherix.txt"), mode="w") as file:
        content = self._hpc.download(resourceid=self._resource_id, filename='log_aspherix.txt')
        file.write(content)
 
 ```
+
 Here for example we download the Aspherix logfile computed of the mixer simulation.
