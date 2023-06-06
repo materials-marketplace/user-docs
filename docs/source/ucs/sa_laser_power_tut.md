@@ -24,7 +24,7 @@ When you open the app you will be presented with the following screen
 ![laser_app|200x100](../_static/img/ucs/standalone_apps/text_outputs.png)
 
 - **Beam area**: Area covered by the beam
-- **Average Power**: Averaging the power over the course of one on/off cycle of the laser.This allows to determine the typical power output of the laser.
+- **Average Power**: Averaging the power over the course of one on/off cycle of the laser. This allows to determine the typical power output of the laser.
 - **Average Power Density**: Average power divided by the size of the beam's area. This parameter provides insights into the power concentration within the laser beam.
 - **Peak Power**:Energy of laser pulse divided by the pulse width.
 - **Peak Power Density**: Peak power divided by the size of the beam's area. This parameter helps you understand the power concentration at the focal point or within a specific region of the laser beam.
