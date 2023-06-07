@@ -15,3 +15,9 @@ This requires the registration of one main application for the platform (host), 
   - Represents an application in the platform of the corresponding host application.
   - Does not need any authentication information, since it is handled centrally by the platform (and thus is common to all resident applications).
   - Implements all the endpoints specific to the application in the platform.
+
+```{toctree}
+:hidden: true
+
+aiidalab
+```
