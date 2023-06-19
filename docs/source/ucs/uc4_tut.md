@@ -1,4 +1,4 @@
-# The UC4 app – Injection moulding for medical applications
+# Use Case 4 – Injection moulding for medical applications
 
 Use case 4 involves simulating and multi-step simulation of the mixing, granulation
 and sintering process for medical applications. The final objective of the workflow

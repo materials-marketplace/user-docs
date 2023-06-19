@@ -1,4 +1,4 @@
-# Implementation of Use Case 1 into the MarketPlace framework
+# Implementation of Use Case 1
 
 This documentation explains how the software SimPARTIX is installed at the MarketPlace. In detail, this manual provides an overview on most of the functions that were created for this Use Case and the manual should serve as a detailed explanation on how to onboard your very own software at the MarketPlace. In the end, we aim at having the "SimPARTIX app" which should allow to access SimPARTIX via the MarketPlace. The purpose of this manual is to provide guidance of programmers that know how to handle their simulation software and that are now facing the challenge to bring their software onto the MarketPlace.
 
@@ -23,7 +23,7 @@ We will first start with including the own software and then gradually move on t
 
 ## Including your own software
 
-In a first step, the own software should be made available. In our case, we host SimPARTIX on Gitlab and use Git as version control system. Using the [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) commands, we added
+In a first step, the own software should be made available. In our case, we host SimPARTIX on GitLab and use Git as version control system. Using the git submodule commands, we added
 our software to the folder. This procedure allows us to keep the own software up to date easily as frequent changes in the source code are expected in order to implement new routines for the communication in MarketPlace.
 
 The result of this procedure are
@@ -35,7 +35,8 @@ Please read through the [git submodule](https://git-scm.com/book/en/v2/Git-Tools
 
 ## The simulation controller folder
 
-Now we are working on the folder "simulation_controller" which contains several files that provide the functions to create, start and stop a simulation as well as retrieving the simulation results. The converter function to convert the SimPARTIX results to MICRESS input files are also placed here. These functions will be called by the SimPARTIX app via the RestAPI.
+Now we are working on the folder "simulation_controller" which contains several files that provide the functions to create, start and stop a simulation as well as retrieving the simulation results.
+The converter function to convert the SimPARTIX results to MICRESS input files are also placed here. These functions will be called by the SimPARTIX app via the RestAPI.
 
 Let us have a look at the following list of files that are all found in the folder "simulation_controller"
 
@@ -422,11 +423,12 @@ class SimulationManager:
         return list(self.simulations.keys())
 ```
 
-Most of the functions are self-explanatory. One function, the get*simulation_output function, will need some adoptions however. This function should return the simulation results, but additionally it should also provide the \_mapping* to map the result names to the ontology and the file type that is provided by the variable _mimetype_ (dlite in our case).
+Most of the functions are self-explanatory. One function, the get_simulation_output function, will need some adoptions however. This function should return the simulation results, but additionally it should also provide the \_mapping to connect the result names to the ontology and the file type that is provided by the variable _mimetype_ (dlite in our case).
 
 ### simulation.py
 
-This is one of the more complex files and hence will be described more in detail. At the beginning, the necessary libraries are imported
+This file represents a unique simulation run.
+It is one of the more complex files and hence will be described more in detail. At the beginning, the necessary libraries are imported
 
 ```python
 import logging

@@ -1,4 +1,4 @@
-# The UC6 app – MatCalc
+# Use Case 6 – MatCalc
 
 Parts produced by laser cladding and laser metal deposition techniques require a balanced trade-off between hardness and strength. Therefore, the experimental effort for the development of customized steel powder is usually very high. This use case aims at reducing the experimental effort by thermodynamic calculations.
 

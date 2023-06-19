@@ -11,7 +11,7 @@ This app takes unbalanced chemical equations as input and generates the correspo
 
 When you open the app you will be presented with the following screen
 
-![cb_app|200x100](../_static/img/ucs/standalone_apps/balancer_input.png)
+![cb_app|200x100](../_static/img/standalone_apps/balancer_input.png)
 
 On this screen, you will find the necessary fields to input the chemical equation you wish to balance. The interface provides the following sections:
 
@@ -21,7 +21,7 @@ On this screen, you will find the necessary fields to input the chemical equatio
 ### Results
 
 After processing the input, the app will present you with the results. The output will be displayed as follows:
-![cb_app|200x100](../_static/img/ucs/standalone_apps/balancer_output.png)
+![cb_app|200x100](../_static/img/standalone_apps/balancer_output.png)
 
 - **Original equation**:This field displays the chemical equation you initially inputted, showing the unbalanced form of the reaction.
 - **Balanced equation**:This field shows the balanced equation. The balanced equation accurately represents the stoichiometry of the reaction, with the appropriate coefficients for each compound or element.

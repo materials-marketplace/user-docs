@@ -10,7 +10,7 @@ The Laser power app is a Python application that calculates various laser power-
 
 When you open the app you will be presented with the following screen
 
-![laser_app|200x100](../_static/img/ucs/standalone_apps/laser_inputs.png)
+![laser_app|200x100](../_static/img/standalone_apps/laser_inputs.png)
 
 - **Frequency**: The frequency of the laser pulses.
 - **Beam Diameter**: The diameter of the laser beam.
@@ -21,7 +21,7 @@ When you open the app you will be presented with the following screen
 
 #### Text
 
-![laser_app|200x100](../_static/img/ucs/standalone_apps/text_outputs.png)
+![laser_app|200x100](../_static/img/standalone_apps/text_outputs.png)
 
 - **Beam area**: Area covered by the beam
 - **Average Power**: Averaging the power over the course of one on/off cycle of the laser. This allows to determine the typical power output of the laser.
@@ -33,4 +33,4 @@ When you open the app you will be presented with the following screen
 
 The app generates a diagram that illustrates the laser's power output over time. On the image a visual description of some quantities is reported
 
-![laser_app|200x100](../_static/img/ucs/standalone_apps/image_output.png)
+![laser_app|200x100](../_static/img/standalone_apps/image_output.png)

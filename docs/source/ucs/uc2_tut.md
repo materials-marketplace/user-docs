@@ -1,4 +1,4 @@
-# The UC2 app – Paste levelling
+# Use Case 2 – Paste levelling
 
 Use case 2 involves simulating viscoelastic pastes used in screen printing for solid oxide fuel cells
 with the objective to develop a simulation workflow to examine numerically the impact of paste properties
