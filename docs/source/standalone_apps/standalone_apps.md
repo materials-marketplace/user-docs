@@ -14,7 +14,7 @@ Their purpose is to demonstrate how apps can be developed and integrated in an e
 :maxdepth: 2
 
 hookes_law
-chemical_balancer 
+chemical_balancer
 laser_power
 weld_strength
 ```

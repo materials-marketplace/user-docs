@@ -423,7 +423,7 @@ class SimulationManager:
         return list(self.simulations.keys())
 ```
 
-Most of the functions are self-explanatory. One function, the get_simulation_output function, will need some adoptions however. This function should return the simulation results, but additionally it should also provide the \_mapping to connect the result names to the ontology and the file type that is provided by the variable _mimetype_ (dlite in our case).
+Most of the functions are self-explanatory. One function, the get*simulation_output function, will need some adoptions however. This function should return the simulation results, but additionally it should also provide the \_mapping to connect the result names to the ontology and the file type that is provided by the variable \_mimetype* (dlite in our case).
 
 ### simulation.py
 

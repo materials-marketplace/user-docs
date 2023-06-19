@@ -33,7 +33,6 @@ Below we give a more prosaic overview of each of the use cases.
 | 5   | Printing of Photovoltaic Thin Films                                | Crystalsol, UCL                                  | ![use case 5](../_static/img/ucs/uc_impl/uc5.png) |
 | 6   | MatCalc demo                                                       | MBN, Fraunhofer                                  | ![use case 6](../_static/img/ucs/uc_impl/uc6.png) |
 
-
 ```{toctree}
 :hidden: true
 :maxdepth: 2
