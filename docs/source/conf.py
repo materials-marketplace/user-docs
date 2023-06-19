@@ -7,7 +7,7 @@ from utils import get_api, source_read_handler, version
 
 # Project information
 project = "MarketPlace"
-copyright = "2022, all rights reserved"
+copyright = "2023, all rights reserved"
 author = "The MarketPlace Consortium"
 release = version
 
@@ -29,9 +29,11 @@ extensions = [
     "nbsphinx",  # Jupyter
     "IPython.sphinxext.ipython_console_highlighting",  # nb syntax highlight
     "sphinx.ext.autosectionlabel",  # Auto-generate section labels.
-    "sphinx_panels",  # Panels in a grid layout or as drop-downs
+    "sphinx_design",  # Create panels in a grid layout or as drop-downs
     "sphinxcontrib.redoc",  # Render OpenAPI with redoc
 ]
+
+myst_enable_extensions = ["colon_fence"]
 
 master_doc = "index"
 

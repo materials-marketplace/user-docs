@@ -6,45 +6,39 @@ Here you will find all the information regarding the usage of the MarketPlace pl
 
 _These docs are compatible with version `{platform_version}` of the platform._
 
-````{panels}
-   :body: text-center
+::::{grid}
+:gutter: 3
+:margin: 2
 
-   ---
-   **Introduction**
+:::{grid-item-card} Introduction
+:columns: 5
+:text-align: center
+:link: intro.html
+General information about the Marketplace
+:::
 
-   General information about the Marketplace
+:::{grid-item-card} Application capabilities
+:columns: 5
+:text-align: center
+:link: apps/capabilities.html
+The list of capabilities supported by the MarketPlace
+:::
 
-   ```{link-button} intro.html
-      :text: Get started!
-      :classes: btn-outline-primary stretched-link
+:::{grid-item-card} Application registration
+:columns: 5
+:text-align: center
+:link: apps/registration.html
+How can you add your own application to MarketPlace?
+:::
 
-   ---
-   **Application capabilities**
+:::{grid-item-card} Support
+:columns: 5
+:text-align: center
+:link: support.html
+Need help?
+:::
 
-   The list of capabilities supported by the MarketPlace
-
-   ```{link-button} apps/capabilities.html
-      :text: Jump to capabilities
-      :classes: btn-outline-primary stretched-link
-
-   ---
-   **Application registration**
-
-   How can you add your own application to MarketPlace?
-
-   ```{link-button} apps/registration.html
-      :text: About registration
-      :classes: btn-outline-primary stretched-link
-
-   ---
-   **Support**
-
-   Need help?
-
-   ```{link-button} support.html
-      :text: Let us know :)
-      :classes: btn-outline-primary stretched-link
-````
+::::
 
 ```{note}
 - Some of the links in this documentation might point to resources with access limited to consortium members.
