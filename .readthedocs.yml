@@ -14,8 +14,8 @@ formats:
   - epub
 
 build:
+  os: ubuntu-22.04
   tools:
-    os: ubuntu-22.04
     python: "3.9"
 python:
   install:
