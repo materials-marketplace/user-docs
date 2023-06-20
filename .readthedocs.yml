@@ -15,6 +15,7 @@ formats:
 
 build:
   tools:
+    os: ubuntu-22.04
     python: "3.9"
 python:
   install:
