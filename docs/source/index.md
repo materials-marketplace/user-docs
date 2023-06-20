@@ -73,6 +73,15 @@ apps/update
 
 ```{toctree}
 :hidden: true
+:caption: App implementations
+:maxdepth: 2
+
+ucs/use_cases
+standalone_apps/standalone_apps
+```
+
+```{toctree}
+:hidden: true
 :caption: Miscellaneous
 :maxdepth: 2
 
