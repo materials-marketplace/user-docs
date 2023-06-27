@@ -84,6 +84,7 @@ def create_input_files(foldername: str, simulation_input: TransformationInput):
 ```
 
 This function "create_input_files" has the function to create the start configuration as well as to create the input files that are necessary for the simulation. To fullfil this task, it needs to have access to the input parameter that the user has requested on the web page. These parameters are shifted within the variable "simulation_input". The parameters can be accessed similar as class attributes. For example, if the user has requested a certain sphere diameter, this respected value can be obtained by
+
 ```python
 simulation_input.sphereDiameter
 ```
@@ -181,7 +182,7 @@ mappings = {
 }
 ```
 
-Obviously, we apply a nested dictionary. Please note at this point that we have provided a name to our mapping that we called "SimpartixOutput". If you want to provide further options for mapping, this can easily be done by another dictionary within the mappings dictionary. In this case, we only have one mapping, but applying the nested dictionary allows to to allow further mapping in future if necessary. 
+Obviously, we apply a nested dictionary. Please note at this point that we have provided a name to our mapping that we called "SimpartixOutput". If you want to provide further options for mapping, this can easily be done by another dictionary within the mappings dictionary. In this case, we only have one mapping, but applying the nested dictionary allows to to allow further mapping in future if necessary.
 
 The remaining part of the script can be copied directly and needs only few adoptions.
 
@@ -357,12 +358,13 @@ from simulation_controller.propartix_files_creation import (
 from simulation_controller.simpartix_output import SimPARTIXOutput
 ```
 
-Special notes should be made for 
+Special notes should be made for
+
 ```python
 from marketplace_standard_app_api.models.transformation import TransformationState
 ```
-which imports the class "TransformationState". This class holds the MarketPlace internal stati which will be used in the following to ask whether a simulation is still running, has ended already, or has stopped with error messages. Examples on this class are provided further below. 
 
+which imports the class "TransformationState". This class holds the MarketPlace internal stati which will be used in the following to ask whether a simulation is still running, has ended already, or has stopped with error messages. Examples on this class are provided further below.
 
 It follows the "Simulation" class which is given in its completeness first to the sake of simplified copy and paste and afterwards each of its functions is explained more in detail
 
@@ -390,7 +392,7 @@ def __init__(self, simulation_input: TransformationInput):
 ```
 
 In the init method, the unique ID is created ("uuid.uuid4()") and stored as internal variable "job_id". Based on this ID, a unique simulation folder path is created based on the parent folder. Next, the function "create_input_files" from the file "propartix_files_creation" is called. This was again a function unique to SimPARTIX in which the start configuration is created and hence that must be written individually for each new simulation software. Last but not least, the status of the simulation is set to "created" and the corresponding
-pieces of information are written to the log file. This is the first example that shows how to make use of MarketPlace class Transformation States to describe the state of the simulation. 
+pieces of information are written to the log file. This is the first example that shows how to make use of MarketPlace class Transformation States to describe the state of the simulation.
 
 The simulation itself is started by the following function
 
@@ -420,7 +422,7 @@ def run(self):
 
 This function first checks if a simulation with that ID is already running like in the case that the user accidentally clicks multiple times on the "run" button. Next, the output path is defined and created which in this case is simply called "output" Then, we change into that directory in which the simulation is to going to be executed and then start calling "SimPARTIX" as subprocess. This is like having a terminal and typing "SimPARTIX" into that terminal. Finally, the state of the simulation is set to "running" and the corresponding info message is written to the log file. If your script has to be called via another command, the corresponding command has to be written where "SimPARTIX" is written in third last line.
 
-```python
+````python
 @property
 def status(self) -> TransformationState:
     """Getter for the status.
@@ -449,7 +451,7 @@ This function is written with a property decorator in the first line. Usually, a
 
 ```python
 Simulation.status()
-```
+````
 
 Adding '@property' allows to use the following notation
 
@@ -497,7 +499,7 @@ def stop(self):
     logging.info(f"Simulation '{self.job_id}' stopped successfully.")
 ```
 
-This function first checks if the processes to be stopped is actually running as it cannot be stopped otherwise and raises an error message if it is not running. If the process is running, it is stopped by _self.process.terminate()_ and the accompanying flag _self.status_ is set. Furthermore, the process of running the simulation is stopped by calling terminate. 
+This function first checks if the processes to be stopped is actually running as it cannot be stopped otherwise and raises an error message if it is not running. If the process is running, it is stopped by _self.process.terminate()_ and the accompanying flag _self.status_ is set. Furthermore, the process of running the simulation is stopped by calling terminate.
 
 Finally, the data of a simulation can be deleted by the following function
 
@@ -619,11 +621,11 @@ class TransformationInput(BaseModel):
 
 ```
 
-Here, we use a python built-in library pydantic to facilitate read in of input data while performing some basic checks if the input data is within an acceptable range. 
+Here, we use a python built-in library pydantic to facilitate read in of input data while performing some basic checks if the input data is within an acceptable range.
 
 ## app.py
 
-This is a function that is actually called when building the docker image.  The handling of the web application is realized by FastAPI. Understanding this part requires knowledge on web communication. Creating the webpage is not part of this tutorial.
+This is a function that is actually called when building the docker image. The handling of the web application is realized by FastAPI. Understanding this part requires knowledge on web communication. Creating the webpage is not part of this tutorial.
 
 We start with importing the main libraries
 
@@ -664,7 +666,7 @@ We then create an object of the SimulationManger class.
 simulation_manager = SimulationManager()
 ```
 
-In FastAPI, the endpoints are provided with the _@app_ decorator. We will hence see lines that start with this decorator throughout the script. Our first example is the _heartbeat_, a function that is used by MarketPlace to check whether the corresponding app itsel is running and can be called.  
+In FastAPI, the endpoints are provided with the _@app_ decorator. We will hence see lines that start with this decorator throughout the script. Our first example is the _heartbeat_, a function that is used by MarketPlace to check whether the corresponding app itsel is running and can be called.
 
 ```python
 @app.get(
@@ -674,7 +676,7 @@ async def heartbeat():
     return "SimPARTIX app up and running"
 ```
 
-This function returns a string saying that the application is running. 
+This function returns a string saying that the application is running.
 
 We continue with the function to cate a new simulation which is called whenever the "submit" button it hit.
 
@@ -692,7 +694,7 @@ async def new_simulation(
     return {"id": job_id}
 ```
 
-This function retrieves the parameter set from the GUI that contains the values such as laser power, laser speed and the geometry of the powder bed. The "create_simulation" function from the simulation manager is called which was the SimPARTIX individual function to actually create all input files and the start configuration. 
+This function retrieves the parameter set from the GUI that contains the values such as laser power, laser speed and the geometry of the powder bed. The "create_simulation" function from the simulation manager is called which was the SimPARTIX individual function to actually create all input files and the start configuration.
 
 We continue with the function to update the simulation state. This function actually initiates running the simulation or stopping of a simulation.
 
@@ -883,7 +885,6 @@ DLite-Python == 0.3.9
 uvicorn<1.0.0
 ```
 
-
 ## openAPI.yml
 
 openAPI is a standardized format which helps that everybody can understand the server communication in a simpler way. Here, we make use of the yaml structure which is one way to create the API specification (the alternative is a json file). The yaml file applies simple key-value pairs like we know from python dictionaries. The yaml file also allows nesting of mappings by where the structure is simply provided by indentation. So let us have a look at the content of the yaml file and then discuss some of the elements more in detail.
@@ -894,365 +895,364 @@ In short, the API specification describes how to describe the RestAPI interface.
 openapi: 3.0.0
 
 info:
-    title: SimPARTIX MarketPlace app
-    description: MarketPlace app for the SimPARTIX simulation software
-    version: 1.0.5
-    x-api-version: 0.3.0
-    x-products:
-        - name: Monthly
-          productId:
+  title: SimPARTIX MarketPlace app
+  description: MarketPlace app for the SimPARTIX simulation software
+  version: 1.0.5
+  x-api-version: 0.3.0
+  x-products:
+    - name: Monthly
+      productId:
 servers:
-    - url: https://simpartix.materials-data.space
+  - url: https://simpartix.materials-data.space
 
 paths:
-    /heartbeat:
-        get:
-            summary: Check if app is alive
-            operationId: heartbeat
-            responses:
-                '200':
-                    description: Successful Response
-                    content:
-                        application/json:
-                            schema: {}
-    /transformations:
-        get:
-            summary: Get all simulations.
-            operationId: getTransformationList
-            responses:
-                '200':
-                    description: Successful Response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/TransformationListResponse'
-        post:
-            summary: Create a new transformation
-            operationId: newTransformation
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/TransformationInput'
-                required: true
-            responses:
-                '200':
-                    description: Successful Response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/TransformationCreateResponse'
-                '422':
-                    description: Validation Error
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/HTTPValidationError'
-    /transformations/{transformation_id}:
-        delete:
-            summary: Delete a transformation
-            operationId: deleteTransformation
-            parameters:
-                - required: true
-                  schema:
-                      title: Transformation Id
-                      type: string
-                      format: uuid4
-                  name: transformation_id
-                  in: path
-            responses:
-                '200':
-                    description: Successful Response
-                    content:
-                        application/json:
-                            schema: {}
-                '422':
-                    description: Validation Error
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/HTTPValidationError'
-        patch:
-            summary: Update the state of the simulation.
-            operationId: updateTransformation
-            parameters:
-                - required: true
-                  schema:
-                      title: Transformation Id
-                      type: string
-                      format: uuid4
-                  name: transformation_id
-                  in: path
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/TransformationUpdateModel'
-                required: true
-            responses:
-                '200':
-                    description: Successful Response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/TransformationUpdateResponse'
-                '400':
-                    description: Error executing update operation
-                '404':
-                    description: Not Found.
-                '409':
-                    description: Requested state not available
-                '422':
-                    description: Validation Error
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/HTTPValidationError'
-    /transformations/{transformation_id}/state:
-        get:
-            summary: Get the state of the simulation.
-            description: |-
-                Get the state of a simulation.
-
-                Args:
-                    transformation_id (TransformationId): ID of the simulation
-
-                Returns:
-                    TransformationStateResponse: The state of the simulation.
-            operationId: getTransformationState
-            parameters:
-                - required: true
-                  schema:
-                      title: Transformation Id
-                      type: string
-                      format: uuid4
-                  name: transformation_id
-                  in: path
-            responses:
-                '200':
-                    description: Successful Response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/TransformationStateResponse'
-                '404':
-                    description: Unknown simulation
-                '422':
-                    description: Validation Error
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/HTTPValidationError'
-    /results:
-        get:
-            summary: Get a simulation's result
-            operationId: getDataset
-            parameters:
-                - required: true
-                  schema:
-                      title: Collection Name
-                      maxLength: 255
-                      minLength: 1
-                      type: string
-                  name: collection_name
-                  in: query
-                - required: true
-                  schema:
-                      title: Dataset Name
-                      minLength: 1
-                      type: string
-                  name: dataset_name
-                  in: query
-            responses:
-                '200':
-                    description: Successful Response
-                    content:
-                        - vnd.sintef.dlite+json
-                '422':
-                    description: Validation Error
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/HTTPValidationError'
-    /mappings:
-        get:
-            summary: Get a list of the available mappings
-            operationId: listSemanticMappings
-            responses:
-                '200':
-                    description: Successful Response
-                    content:
-                        application/json:
-                            schema: {}
-    /mappings/{semantic_mapping_id}:
-        get:
-            summary: Get a specific mapping
-            operationId: getSemanticMapping
-            parameters:
-                - required: true
-                  schema:
-                      title: Semantic Mapping Id
-                      type: string
-                  name: semantic_mapping_id
-                  in: path
-            responses:
-                '200':
-                    description: Successful Response
-                    content:
-                        application/json:
-                            schema: {}
-                '422':
-                    description: Validation Error
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/HTTPValidationError'
-components:
-    schemas:
-        HTTPValidationError:
-            title: HTTPValidationError
-            type: object
-            properties:
-                detail:
-                    title: Detail
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/ValidationError'
-        TransformationCreateResponse:
-            title: TransformationCreateResponse
-            required:
-                - id
-            type: object
-            properties:
-                id:
-                    title: Id
-                    type: string
-                    format: uuid4
-        TransformationInput:
-            title: TransformationInput
-            type: object
-            properties:
-                laserPower:
-                    title: Laserpower
-                    type: number
-                    default: 150
-                laserSpeed:
-                    title: Laserspeed
-                    type: number
-                    default: 3
-                sphereDiameter:
-                    title: Spherediameter
-                    type: number
-                    default: 3.0e-05
-                phi:
-                    title: Phi
-                    type: number
-                    default: 0.7
-                powderLayerHeight:
-                    title: Powderlayerheight
-                    type: number
-                    default: 6.0e-05
-        TransformationListResponse:
-            title: TransformationListResponse
-            required:
-                - items
-            type: object
-            properties:
-                items:
-                    title: Items
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/TransformationModel'
-        TransformationModel:
-            title: TransformationModel
-            required:
-                - id
-                - parameters
-            type: object
-            properties:
-                id:
-                    title: Id
-                    type: string
-                    format: uuid4
-                parameters:
-                    title: Parameters
-                    type: object
-                state:
-                    $ref: '#/components/schemas/TransformationState'
-        TransformationState:
-            title: TransformationState
-            enum:
-                - CREATED
-                - RUNNING
-                - STOPPED
-                - COMPLETED
-                - FAILED
+  /heartbeat:
+    get:
+      summary: Check if app is alive
+      operationId: heartbeat
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /transformations:
+    get:
+      summary: Get all simulations.
+      operationId: getTransformationList
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransformationListResponse"
+    post:
+      summary: Create a new transformation
+      operationId: newTransformation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransformationInput"
+        required: true
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransformationCreateResponse"
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+  /transformations/{transformation_id}:
+    delete:
+      summary: Delete a transformation
+      operationId: deleteTransformation
+      parameters:
+        - required: true
+          schema:
+            title: Transformation Id
             type: string
-            description: An enumeration.
-        TransformationStateResponse:
-            title: TransformationStateResponse
-            required:
-                - id
-                - state
-            type: object
-            properties:
-                id:
-                    title: Id
-                    type: string
-                    format: uuid4
-                state:
-                    $ref: '#/components/schemas/TransformationState'
-        TransformationUpdateModel:
-            title: TransformationUpdateModel
-            required:
-                - state
-            type: object
-            properties:
-                state:
-                    title: State
-                    enum:
-                        - RUNNING
-                        - STOPPED
-                    type: string
-        TransformationUpdateResponse:
-            title: TransformationUpdateResponse
-            required:
-                - id
-                - state
-            type: object
-            properties:
-                id:
-                    title: Id
-                    type: string
-                    format: uuid4
-                state:
-                    title: State
-                    enum:
-                        - RUNNING
-                        - STOPPED
-                    type: string
-        ValidationError:
-            title: ValidationError
-            required:
-                - loc
-                - msg
-                - type
-            type: object
-            properties:
-                loc:
-                    title: Location
-                    type: array
-                    items:
-                        anyOf:
-                            - type: string
-                            - type: integer
-                msg:
-                    title: Message
-                    type: string
-                type:
-                    title: Error Type
-                    type: string
+            format: uuid4
+          name: transformation_id
+          in: path
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+    patch:
+      summary: Update the state of the simulation.
+      operationId: updateTransformation
+      parameters:
+        - required: true
+          schema:
+            title: Transformation Id
+            type: string
+            format: uuid4
+          name: transformation_id
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransformationUpdateModel"
+        required: true
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransformationUpdateResponse"
+        "400":
+          description: Error executing update operation
+        "404":
+          description: Not Found.
+        "409":
+          description: Requested state not available
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+  /transformations/{transformation_id}/state:
+    get:
+      summary: Get the state of the simulation.
+      description: |-
+        Get the state of a simulation.
 
+        Args:
+            transformation_id (TransformationId): ID of the simulation
+
+        Returns:
+            TransformationStateResponse: The state of the simulation.
+      operationId: getTransformationState
+      parameters:
+        - required: true
+          schema:
+            title: Transformation Id
+            type: string
+            format: uuid4
+          name: transformation_id
+          in: path
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransformationStateResponse"
+        "404":
+          description: Unknown simulation
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+  /results:
+    get:
+      summary: Get a simulation's result
+      operationId: getDataset
+      parameters:
+        - required: true
+          schema:
+            title: Collection Name
+            maxLength: 255
+            minLength: 1
+            type: string
+          name: collection_name
+          in: query
+        - required: true
+          schema:
+            title: Dataset Name
+            minLength: 1
+            type: string
+          name: dataset_name
+          in: query
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            - vnd.sintef.dlite+json
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+  /mappings:
+    get:
+      summary: Get a list of the available mappings
+      operationId: listSemanticMappings
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /mappings/{semantic_mapping_id}:
+    get:
+      summary: Get a specific mapping
+      operationId: getSemanticMapping
+      parameters:
+        - required: true
+          schema:
+            title: Semantic Mapping Id
+            type: string
+          name: semantic_mapping_id
+          in: path
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+components:
+  schemas:
+    HTTPValidationError:
+      title: HTTPValidationError
+      type: object
+      properties:
+        detail:
+          title: Detail
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationError"
+    TransformationCreateResponse:
+      title: TransformationCreateResponse
+      required:
+        - id
+      type: object
+      properties:
+        id:
+          title: Id
+          type: string
+          format: uuid4
+    TransformationInput:
+      title: TransformationInput
+      type: object
+      properties:
+        laserPower:
+          title: Laserpower
+          type: number
+          default: 150
+        laserSpeed:
+          title: Laserspeed
+          type: number
+          default: 3
+        sphereDiameter:
+          title: Spherediameter
+          type: number
+          default: 3.0e-05
+        phi:
+          title: Phi
+          type: number
+          default: 0.7
+        powderLayerHeight:
+          title: Powderlayerheight
+          type: number
+          default: 6.0e-05
+    TransformationListResponse:
+      title: TransformationListResponse
+      required:
+        - items
+      type: object
+      properties:
+        items:
+          title: Items
+          type: array
+          items:
+            $ref: "#/components/schemas/TransformationModel"
+    TransformationModel:
+      title: TransformationModel
+      required:
+        - id
+        - parameters
+      type: object
+      properties:
+        id:
+          title: Id
+          type: string
+          format: uuid4
+        parameters:
+          title: Parameters
+          type: object
+        state:
+          $ref: "#/components/schemas/TransformationState"
+    TransformationState:
+      title: TransformationState
+      enum:
+        - CREATED
+        - RUNNING
+        - STOPPED
+        - COMPLETED
+        - FAILED
+      type: string
+      description: An enumeration.
+    TransformationStateResponse:
+      title: TransformationStateResponse
+      required:
+        - id
+        - state
+      type: object
+      properties:
+        id:
+          title: Id
+          type: string
+          format: uuid4
+        state:
+          $ref: "#/components/schemas/TransformationState"
+    TransformationUpdateModel:
+      title: TransformationUpdateModel
+      required:
+        - state
+      type: object
+      properties:
+        state:
+          title: State
+          enum:
+            - RUNNING
+            - STOPPED
+          type: string
+    TransformationUpdateResponse:
+      title: TransformationUpdateResponse
+      required:
+        - id
+        - state
+      type: object
+      properties:
+        id:
+          title: Id
+          type: string
+          format: uuid4
+        state:
+          title: State
+          enum:
+            - RUNNING
+            - STOPPED
+          type: string
+    ValidationError:
+      title: ValidationError
+      required:
+        - loc
+        - msg
+        - type
+      type: object
+      properties:
+        loc:
+          title: Location
+          type: array
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string
 ```
 
 First the version of openAPI is provided which is 3.0.0.
@@ -1285,15 +1285,15 @@ Now we provide all the endpoints which are used as the flask route in the [previ
 
 ```yml
 /heartbeat:
-    get:
-        summary: Check if app is alive
-        operationId: heartbeat
-        responses:
-            '200':
-                description: Successful Response
-                content:
-                    application/json:
-                        schema: {}
+  get:
+    summary: Check if app is alive
+    operationId: heartbeat
+    responses:
+      "200":
+        description: Successful Response
+        content:
+          application/json:
+            schema: {}
 ```
 
 This snippet provides the endpoints _heartbeat_ and defines that is only has a _get_ method. There is one function to be called that we named _heartbeat_. Finally, we provide the security scheme and the response types where we only provided the 200 response which stands for a successful operation.
@@ -1334,9 +1334,9 @@ RUN pip install -r requirements.txt
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
-In the first step, we load the SimPARTIX image from the Fraunhofer repository to have a base with all functionalities available that are already required by SimPARTIX and ProPARTIX. This however does not include the software itself, but only the libraries. In the following, we add the "simpartix" folder to the image (see again [here](#including-your-own-software)) as a git submodule. In the image, the simpartix folder is however called "source". We change into that directory and there into a "code" folder where we put out files with which the SimPARTIX binary is compiled. Calling "RUN make -j 4" compiles the SimPARTIX binary. Similarly, we change into the ProPARTIX folder and compile here the files that are necessary for the ProPARTIX engine. At this point, the SimPARTIX binary and ProPARTIX functions are all present. We then move into the folder "app" in which alle the services of the SimPARTIX app are going to be running. 
+In the first step, we load the SimPARTIX image from the Fraunhofer repository to have a base with all functionalities available that are already required by SimPARTIX and ProPARTIX. This however does not include the software itself, but only the libraries. In the following, we add the "simpartix" folder to the image (see again [here](#including-your-own-software)) as a git submodule. In the image, the simpartix folder is however called "source". We change into that directory and there into a "code" folder where we put out files with which the SimPARTIX binary is compiled. Calling "RUN make -j 4" compiles the SimPARTIX binary. Similarly, we change into the ProPARTIX folder and compile here the files that are necessary for the ProPARTIX engine. At this point, the SimPARTIX binary and ProPARTIX functions are all present. We then move into the folder "app" in which alle the services of the SimPARTIX app are going to be running.
 
-We then copy the folder "simulation\_files", "models", "simpartix", "static" and "simpartix\_controller" and define the flask app and the port. These folders include all the files explained above as well as the SimPARTIX binary. The folder "static" has not been explained as it only contains some figures. Next, we add the file _requirements.txt_ and install all the python libraries via pip. Finally, we add the file _app.py_, set the corresponding environment variables for flask and start the fastapi application.
+We then copy the folder "simulation_files", "models", "simpartix", "static" and "simpartix_controller" and define the flask app and the port. These folders include all the files explained above as well as the SimPARTIX binary. The folder "static" has not been explained as it only contains some figures. Next, we add the file _requirements.txt_ and install all the python libraries via pip. Finally, we add the file _app.py_, set the corresponding environment variables for flask and start the fastapi application.
 
 ## docker-compose.yml
 
@@ -1344,15 +1344,13 @@ Docker compose is build on the docker engine and it is used for running multiple
 
 ```yml
 ---
-version: '3.6'
+version: "3.6"
 
 services:
-
-    simpartix_app:
-        build: .
-        ports:
-            - 8000:8000
-
+  simpartix_app:
+    build: .
+    ports:
+      - 8000:8000
 ```
 
 This files provides the following information
