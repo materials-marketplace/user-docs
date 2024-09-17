@@ -1,12 +1,13 @@
 # Implementation of Use Case 1
 
-This documentation explains how the software SimPARTIX is installed at the MarketPlace. In detail, this manual provides an overview on most of the functions that were created for this Use Case and the manual should serve as a detailed explanation on how to onboard your very own software at the MarketPlace. In the end, we aim at having the "SimPARTIX app" which should allow to access SimPARTIX via the MarketPlace. The purpose of this manual is to provide guidance of programmers that know how to handle their simulation software and that are now facing the challenge to bring their software onto the MarketPlace.
+This documentation explains how the software SimPARTIX is installed at the MarketPlace. In detail, this manual provides an overview on most of the functions that were created for this Use Case and the manual should serve as a detailed explanation on how to onboard your very own software at the MarketPlace. In the end, we aim at having the "SimPARTIX application" or "SimPARTIX app" which should allow to access SimPARTIX via the MarketPlace. The purpose of this manual is to provide guidance of programmers that know how to handle their simulation software and that are now facing the challenge to bring their software onto the MarketPlace.
 
 All files are organized within one folder (the parent folder) and we will slowly go through each folder and each file therein. In this Use Case, the software SimPARTIX is included. Please follow along with this guide and replace SimPARTIX mentally with your own software in mind and add the corresponding scripts and functions where necessary.
 In the end of this tutorial, you should have the following files and folder in your working directory
 
 - [Folder] [simpartix](#including-your-own-software)
 - [Folder] [simulation_controller](#the-simulation-controller-folder)
+- [Folder] [models](#models)
 - [app.py](#apppy)
 - [.gitmodules](#including-your-own-software)
 - [docker-compose.yml](#docker-composeyml)
@@ -41,7 +42,6 @@ The converter function to convert the SimPARTIX results to MICRESS input files a
 Let us have a look at the following list of files that are all found in the folder "simulation_controller"
 
 - \_\_init\_\_.py
-- config.py
 - propartix_files_creation.py
 - simpartix_output.py
 - SimPARTIXOutput.json
@@ -59,123 +59,6 @@ from directory.filename import classname
 when having a class "classname" in a file "filename" within the directory "directory". We will use this commands
 to a great extend in the following files in order to import classes from specific files, two of mich are presented in the next chapter.
 
-### config.py
-
-In this file, we have defined two classes, "SimulationStatus" and "SimulationConfig", and additionally we provide a definition for the simulation states. Here, we define 5 simulation states that are
-
-- created
-- running
-- completed
-- stopped
-- error
-
-These 5 states were found to cover all situation. The corresponding class structure looks as follow
-
-```python
-from enum import Enum
-class SimulationStatus(Enum):
-    def __str__(self):
-        return str(self.value)
-    CREATED = "CREATED"
-    RUNNING = "RUNNING"
-    COMPLETED = "COMPLETED"
-    STOPPED = "STOPPED"
-    ERROR = "ERROR"
-```
-
-By writing "Enum" into the bracket, this class is inheriting from the Enum class which is a built-in class from python. The aim of using this class is to ask whether a simulation is still running or whether an error occurred.
-In fact, we can apply the following notation
-
-```python
-state = SimulationStatus.CREATED # which is equal to "CREATED"
-# and then ask for that state by
-if state == SimulationStatus.CREATED:
-    print('simulation has been created')
-```
-
-which is a readable syntax to ask for the state of a simulation. It follows the simulation configuration.
-This class structure serves as holding the input parameter that the user
-provided to the SimPARTIX app.
-
-```python
-import logging
-class SimulationConfig:
-    def __init__(self, request_obj: dict):
-        err_msg = f"Error creating simulation: {str(request_obj)}. "
-        self.configuration: int = request_obj.get("configuration", 1)
-        self.laserPower: float = request_obj.get("laserPower", 150)
-        self.laserSpeed: float = request_obj.get("laserSpeed", 3.0)
-        self.sphereDiameter: float = request_obj.get("sphereDiameter", 30e-6)
-        if self.sphereDiameter <= 5e-6:
-            err_msg += "Sphere diameter value too little."
-            logging.error(err_msg)
-            raise ValueError(err_msg)
-        self.phi: float = request_obj.get("phi", 0.7)
-        if self.phi >= 1 or self.phi < 0:
-            err_msg += "Phi must be between 0 and 1."
-            logging.error(err_msg)
-            raise ValueError(err_msg)
-        self.powderLayerHeight: float = request_obj.get(
-            "powderLayerHeight", 60e-6
-        )
-        if self.powderLayerHeight < self.sphereDiameter:
-            err_msg += (
-                "Powder layer height must be at least the sphere diameter"
-            )
-            logging.error(err_msg)
-            raise ValueError(err_msg)
-```
-
-This is a class that contains only an init method. This is the function that is called whenever an instance of the
-SimulationConfig class is created. Basically, this function receives the input parameters that are made available for
-the Use Case 1 tutorial. These were
-
-- Laser power (W)
-- Laser scan speed (m/s) with which the laser traverses the powder bed
-- Powder volume fraction (-) to describe the initial filling density of the powder
-- Powder layer thickness (m) which is the height of the powder layer.
-- Particle diameter (m). In this tutorial, all particles will have the same diameter.
-  and the corresponding parameters were fed into a dictionary. At the beginning, each of the keys from this
-  dictionary is called and in the case that this key has not been defined, a default is being returned. For example the code line
-
-```python
-self.configuration: int = request_obj.get("configuration", 1)
-```
-
-asks if there is a key with the name "configuration" in the dictionary "request_obj". If the key is present, its value is returned (that is the value that the user has provided in the MarketPlace web interface). If the key has not been defined, we use the default value of "1". This value for the configuration is mapped to an integer
-and stored in the variable "self.configuration" to make it available within the instant of the SimulationConfig
-object.
-
-The same procedure is done for the other parameters. Additionally, we applied some checks to make sure
-the user input variables are in a physically valid range. For example, the filling fraction "phi" cannot be smaller
-than 0 as there would be no powder to melt or higher as 1 as 1 means everything is filled with powder and we
-cannot have a filling fraction higher than 100%.
-
-Furthermore, we added the logging module at the beginning of the snippet. This is a python in-built library that simplifies to write log files in which error messages are written to. This allows for example to write error messages
-
-```python
-logging.error("This is my error message")
-```
-
-or info messages
-
-```python
-logging.info("This is my info message")
-```
-
-Additionally, the file also contains the following two lines of code
-
-```python
-# Global Constant to define the extension of zip files
-ZIP_EXTENSION = "zip"
-
-# Global constant to define the path of the folder where all the simulations are saved
-SIMULATIONS_FOLDER_PATH = "/app/simulation_files"
-```
-
-Which could also occur somewhere else and defines global constants which are the folder path in which
-all simulation results are about to appear and the extension for the compression.
-
 ### propartix_files_creation.py
 
 This file is tailored to SimPARTIX and it uses the function that are provided by SimPARTIX to create
@@ -186,27 +69,24 @@ for the file name. This file has the following structure.
 import os
 import numpy as np
 import propartix as px
-from simulation_controller.config import SimulationConfig
 
-def create_input_files(foldername: str, simulationConfig: SimulationConfig):
+from models.transformation import TransformationInput
+
+def create_input_files(foldername: str, simulation_input: TransformationInput):
     """
     Function to create the start configuration for the MarketPlace simulation.
 
-    foldername : string
-        The folder name in which die input file should be created
-
-    simulationConfig : SimulationConfig
+    simulation_input : TransformationInput
         instance with the specific configuration values for a run
     """
     # it follows a list of code lines specific to ProPARTIX to create the
     # start configuration
 ```
 
-This function "create_input_files" can access the variables that have been defined in the SimulationConfig
-from above. For example, the sphere diameter can be accessed by
+This function "create_input_files" has the function to create the start configuration as well as to create the input files that are necessary for the simulation. To fullfil this task, it needs to have access to the input parameter that the user has requested on the web page. These parameters are shifted within the variable "simulation_input". The parameters can be accessed similar as class attributes. For example, if the user has requested a certain sphere diameter, this respected value can be obtained by
 
 ```python
-simulationConfig.sphereDiameter
+simulation_input.sphereDiameter
 ```
 
 with a similar syntax for all other variables.
@@ -225,8 +105,7 @@ All functions in this file have to be tailored to the specific use case.
 
 ### simpartix_output.py and SimPARTIXOutput.json
 
-The pieces of information that need to be transferred between SimPARTIX and MICRESS are temperature, a quantity called group which is the ID of each powder element, and state of matter which describes whether this specific
-part of the powder is still solid, liquid or vaporous.
+The pieces of information that need to be transferred between SimPARTIX and MICRESS are temperature, a quantity called group which is the ID of each powder element, and state of matter which describes whether this specific part of the powder is still solid, liquid or vaporous.
 
 This file "simpartix_output.py" only contains a class with the following content
 
@@ -290,6 +169,7 @@ We continue with the file "simulation_manager.py" where we directly continue wit
 stage. This is realized by a simple dictionary.
 
 ```python
+
 mappings = {
     "SimpartixOutput": {
         "name": "SimpartixOutput",
@@ -302,11 +182,20 @@ mappings = {
 }
 ```
 
-Obviously, we apply a nested dictionary. Please note at this point that we have provided a name to our mapping that we called "SimpartixOutput". If you want to provide further options for mapping, this can easily be done by another dictionary within the mappings dictionary.
+Obviously, we apply a nested dictionary. Please note at this point that we have provided a name to our mapping that we called "SimpartixOutput". If you want to provide further options for mapping, this can easily be done by another dictionary within the mappings dictionary. In this case, we only have one mapping, but applying the nested dictionary allows to to allow further mapping in future if necessary.
 
 The remaining part of the script can be copied directly and needs only few adoptions.
 
-```python
+```
+import logging
+
+from marketplace_standard_app_api.models.transformation import (
+    TransformationState,
+)
+
+from simulation_controller.simulation import Simulation
+
+
 class SimulationManager:
     def __init__(self):
         self.simulations: dict = {}
@@ -381,10 +270,8 @@ class SimulationManager:
         Returns:
             str: json representation of the dlite object
         """
-        mapping = "SimpartixOutput"
-        mimetype = "vnd.sintef.dlite+json"
         simulation = self._get_simulation(job_id)
-        return simulation.get_output(), mapping, mimetype
+        return simulation.get_output()
 
     def stop_simulation(self, job_id: str) -> dict:
         """Force termination of a simulation.
@@ -403,27 +290,34 @@ class SimulationManager:
         self._get_simulation(job_id).delete()
         self._delete_simulation(job_id)
 
-    def get_simulation_state(self, job_id: str) -> SimulationStatus:
+    def get_simulation_state(self, job_id: str) -> TransformationState:
         """Return the status of a particular simulation.
 
         Args:
             job_id (str): id of the simulation
 
         Returns:
-            SimulationStatus: status of the simulation
+            TransformationState: status of the simulation
         """
         return self._get_simulation(job_id).status
 
-    def get_simulation_list(self) -> list:
+    def get_simulations(self) -> dict:
         """Return unique ids of all the simulations.
 
         Returns:
             list: list of simulation ids
         """
-        return list(self.simulations.keys())
+        items = []
+        for simulation in self.simulations.values():
+            items.append(
+                {
+                    "id": simulation.job_id,
+                    "parameters": simulation.parameters,
+                    "state": simulation.status,
+                }
+            )
+        return items
 ```
-
-Most of the functions are self-explanatory. One function, the get*simulation_output function, will need some adoptions however. This function should return the simulation results, but additionally it should also provide the \_mapping to connect the result names to the ontology and the file type that is provided by the variable \_mimetype* (dlite in our case).
 
 ### simulation.py
 
@@ -438,11 +332,12 @@ import subprocess
 import uuid
 from typing import Tuple
 import dlite
+
 ```
 
 for the following purpose
 
-- logging -> for the error message
+- logging -> allows to keep track of error messages
 - os, shutil, subprocesses -> to create new directories, copy files and start the simulation software SimPARTIX
 - uuid -> a useful library to assign unique IDs to the simulation
 - Tuple from tying is imported. In the function declaration, the return type of the data is also provided. Tuple is a built-in data type of python, but in the current version of python, this data type must be imported in order to be provided as return type.
@@ -451,11 +346,11 @@ for the following purpose
 We also import the following classes and function from our previously created files
 
 ```python
-from simulation_controller.config import (
-    SIMULATIONS_FOLDER_PATH,
-    SimulationConfig,
-    SimulationStatus,
+from marketplace_standard_app_api.models.transformation import (
+    TransformationState,
 )
+
+from models.transformation import TransformationInput
 from simulation_controller.propartix_files_creation import (
     create_input_files,
     get_output_values,
@@ -463,171 +358,41 @@ from simulation_controller.propartix_files_creation import (
 from simulation_controller.simpartix_output import SimPARTIXOutput
 ```
 
+Special notes should be made for
+
+```python
+from marketplace_standard_app_api.models.transformation import TransformationState
+```
+
+which imports the class "TransformationState". This class holds the MarketPlace internal stati which will be used in the following to ask whether a simulation is still running, has ended already, or has stopped with error messages. Examples on this class are provided further below.
+
 It follows the "Simulation" class which is given in its completeness first to the sake of simplified copy and paste and afterwards each of its functions is explained more in detail
 
 ```python
-class Simulation:
-    """Manage a single simulation."""
+SIMULATIONS_FOLDER_PATH = "/app/simulation_files"
 
-    def __init__(self, request_obj: dict):
-        self.job_id: str = str(uuid.uuid4())
-        self.simulationPath = os.path.join(
-            SIMULATIONS_FOLDER_PATH, self.job_id
-        )
-        create_input_files(self.simulationPath, SimulationConfig(request_obj))
-        self._status: SimulationStatus = SimulationStatus.CREATED
-        self._process = None
-        logging.info(
-            f"Simulation '{self.job_id}' with "
-            f"configuration {request_obj} created."
-        )
-
-    @property
-    def status(self) -> SimulationStatus:
-        """Getter for the status.
-
-        If the simulation is running, the process is checked for completion.
-
-        Returns:
-            SimulationStatus: status of the simulation
-        """
-        if self._status == SimulationStatus.RUNNING:
-            process_status = self.process.poll()
-            if process_status is None:
-                return SimulationStatus.RUNNING
-            elif process_status == 0:
-                logging.info(f"Simulation '{self.job_id}' is now completed.")
-                self.status = SimulationStatus.COMPLETED
-            else:
-                logging.error(f"Error occured in simulation '{self.job_id}'.")
-                self.status = SimulationStatus.ERROR
-        return self._status
-
-    @status.setter
-    def status(self, value: SimulationStatus):
-        self._status = value
-
-    @property
-    def process(self):
-        return self._process
-
-    @process.setter
-    def process(self, value):
-        self._process = value
-
-    def run(self):
-        """
-        Start running a simulation.
-
-        A new process that calls the SimPARTIX binary is spawned,
-        and the output is stored in a separate directory
-
-        Raises:
-            RuntimeError: when the simulation is already in progress
-        """
-        if self.status == SimulationStatus.RUNNING:
-            msg = f"Simulation '{self.job_id}' already in progress."
-            logging.error(msg)
-            raise RuntimeError(msg)
-        outputPath = os.path.join(self.simulationPath, "output")
-        if not os.path.isdir(outputPath):
-            os.mkdir(outputPath)
-        os.chdir(self.simulationPath)
-        self.process = subprocess.Popen(["SimPARTIX"], stdout=subprocess.PIPE)
-        self.status = SimulationStatus.RUNNING
-        logging.info(f"Simulation '{self.job_id}' started successfully.")
-
-    def stop(self):
-        """Stop a running process.
-
-        Raises:
-            RuntimeError: if the simulation is not running
-        """
-        if self.process is None:
-            msg = f"No process to stop. Is simulation '{self.job_id}' running?"
-
-            logging.error(msg)
-            raise RuntimeError(msg)
-        self.process.terminate()
-        self.status = SimulationStatus.STOPPED
-        self.process = None
-        logging.info(f"Simulation '{self.job_id}' stopped successfully.")
-
-    def get_output(self) -> Tuple[str]:
-        """Get the output of a simulation
-
-        Raises:
-            RuntimeError: If the simulation has not run
-
-        Returns:
-            Tuple[str]: data in json format
-                        semantic mapping for the data
-                        mimetype of the data
-        """
-        result = get_output_values(self.simulationPath)
-
-        path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "SimPARTIXOutput.json"
-        )
-        DLiteSimPARTIXOutput = dlite.classfactory(
-            SimPARTIXOutput, url=f"json://{path}"
-        )
-        if self.status in (
-            SimulationStatus.RUNNING,
-            SimulationStatus.CREATED,
-        ):
-            msg = (
-                f"Cannot download, simulation '{self.job_id}' "
-                f"has status '{self.status.name}'."
-            )
-            logging.error(msg)
-            raise RuntimeError(msg)
-        simpartix_output = DLiteSimPARTIXOutput(
-            temperature=result["Temperature_SPH"],
-            group=result["Group"],
-            state_of_matter=result["StateOfMatter_SPH"],
-        )
-        # Store the output as a file for posterity
-        file_path = os.path.join(self.simulationPath, self.job_id)
-        simpartix_output.dlite_inst.save(f"json://{file_path}.json?mode=w")
-        return simpartix_output.dlite_inst.asjson()
-
-    def delete(self):
-        """
-        Delete all the simulation folders and files.
-
-        Raises:
-            RuntimeError: if deleting a running simulation
-        """
-        if self.status == SimulationStatus.RUNNING:
-            msg = f"Simulation '{self.job_id}' is running."
-            logging.error(msg)
-            raise RuntimeError(msg)
-        shutil.rmtree(self.simulationPath)
-        logging.info(f"Simulation '{self.job_id}' and related files deleted.")
 ```
 
 It follows the detailed explanation
 
 ```python
-def __init__(self, request_obj: dict):
+def __init__(self, simulation_input: TransformationInput):
     self.job_id: str = str(uuid.uuid4())
     self.simulationPath = os.path.join(
         SIMULATIONS_FOLDER_PATH, self.job_id
     )
-    create_input_files(self.simulationPath, SimulationConfig(request_obj))
-    self._status: SimulationStatus = SimulationStatus.CREATED
+    create_input_files(self.simulationPath, simulation_input)
+    self.parameters = simulation_input
+    self._status: TransformationState = TransformationState.CREATED
     self._process = None
     logging.info(
         f"Simulation '{self.job_id}' with "
-        f"configuration {request_obj} created."
+        f"configuration {simulation_input} created."
     )
 ```
 
-In the init method, the unique ID is created ("uuid.uuid4()") and stored as internal variable "job_id". Based on this ID, a unique simulation folder path is created based on the parent folder PATH that was defined in the file "config.py".
-Next, the function "create_input_files" from the file "propartix_files_creation" is called. This was again a function unique to SimPARTIX in which the start configuration is created and hence that must be written individually for each new simulation software.
-Last but not least, the status of the simulation is set to "created" and the corresponding
-pieces of information are written to the log file.
+In the init method, the unique ID is created ("uuid.uuid4()") and stored as internal variable "job_id". Based on this ID, a unique simulation folder path is created based on the parent folder. Next, the function "create_input_files" from the file "propartix_files_creation" is called. This was again a function unique to SimPARTIX in which the start configuration is created and hence that must be written individually for each new simulation software. Last but not least, the status of the simulation is set to "created" and the corresponding
+pieces of information are written to the log file. This is the first example that shows how to make use of MarketPlace class Transformation States to describe the state of the simulation.
 
 The simulation itself is started by the following function
 
@@ -642,7 +407,7 @@ def run(self):
     Raises:
         RuntimeError: when the simulation is already in progress
     """
-    if self.status == SimulationStatus.RUNNING:
+    if self.status == TransformationState.RUNNING:
         msg = f"Simulation '{self.job_id}' already in progress."
         logging.error(msg)
         raise RuntimeError(msg)
@@ -651,57 +416,42 @@ def run(self):
         os.mkdir(outputPath)
     os.chdir(self.simulationPath)
     self.process = subprocess.Popen(["SimPARTIX"], stdout=subprocess.PIPE)
-    self.status = SimulationStatus.RUNNING
+    self.status = TransformationState.RUNNING
     logging.info(f"Simulation '{self.job_id}' started successfully.")
 ```
 
-This function first checks if a simulation with that ID is already running like in the case that
-the user accidentally clicks multiple times on the "run" button.
-Next, the output path is defined and created which in this case is simply called "output"
-Then, we change into that directory in which the simulation is to going to be executed and then
-start calling "SimPARTIX" as subprocess. This is like having a terminal and typing
-"SimPARTIX" into that terminal. Finally, the state of the simulation is set to
-"running" and the corresponding info message is written to the log file.
-If your script has to be called via another command, the corresponding
-command has to be written where "SimPARTIX" is written in third last line.
+This function first checks if a simulation with that ID is already running like in the case that the user accidentally clicks multiple times on the "run" button. Next, the output path is defined and created which in this case is simply called "output" Then, we change into that directory in which the simulation is to going to be executed and then start calling "SimPARTIX" as subprocess. This is like having a terminal and typing "SimPARTIX" into that terminal. Finally, the state of the simulation is set to "running" and the corresponding info message is written to the log file. If your script has to be called via another command, the corresponding command has to be written where "SimPARTIX" is written in third last line.
 
-```python
-@property #dea
-def status(self) -> SimulationStatus:
+````python
+@property
+def status(self) -> TransformationState:
     """Getter for the status.
 
     If the simulation is running, the process is checked for completion.
 
     Returns:
-        SimulationStatus: status of the simulation
+        TransformationState: status of the simulation
     """
-    if self._status == SimulationStatus.RUNNING:
+    if self._status == TransformationState.RUNNING:
         process_status = self.process.poll()
         if process_status is None:
-            return SimulationStatus.RUNNING
+            return TransformationState.RUNNING
         elif process_status == 0:
             logging.info(f"Simulation '{self.job_id}' is now completed.")
-            self.status = SimulationStatus.COMPLETED
+            self.status = TransformationState.COMPLETED
         else:
             logging.error(f"Error occured in simulation '{self.job_id}'.")
-            self.status = SimulationStatus.ERROR
+            self.status = TransformationState.FAILED
     return self._status
-```
+    ```
 
-This piece of code checks if the simulation is still running. The idea behind this function is that first we check for the flag "SimulationStatus.RUNNING" as the simulation
-cannot be running otherwise. If the simulation was declared as running the last time,
-we check again. We remember that the simulation resource when starting the simulation
-was stored in the variable _self.process_. This allows us to check if there is still a running
-resources behind _self.process_.
-This is done by _self.process.poll()_. This function does not work on all
-operating system, but on Linux it can be used to screen for I/O events that would occur during
-the simulation.
+This piece of code checks if the simulation is still running. The idea behind this function is that first we check for the flag "TransformationState.RUNNING" as the simulation cannot be running otherwise. If the simulation was declared as running the last time, we check again. We remember that the simulation resource when starting the simulation was stored in the variable _self.process_. This allows us to check if there is still a running resources behind _self.process_. This is done by _self.process.poll()_. This function does not work on all operating system, but on Linux it can be used to screen for I/O events that would occur during the simulation.
 
 This function is written with a property decorator in the first line. Usually, a function needs to be called with opening and closing bracket, i.e.
 
 ```python
 Simulation.status()
-```
+````
 
 Adding '@property' allows to use the following notation
 
@@ -715,7 +465,7 @@ It follows a list of further setter and getter to set the simulation or process 
 
 ```python
 @status.setter
-def status(self, value: SimulationStatus):
+def status(self, value: TransformationState):
     self._status = value
 
 @property
@@ -743,13 +493,13 @@ def stop(self):
 
         logging.error(msg)
         raise RuntimeError(msg)
-    self.process.terminate() #dea how does this work
-    self.status = SimulationStatus.STOPPED
+    self.process.terminate()
+    self.status = TransformationState.STOPPED
     self.process = None
     logging.info(f"Simulation '{self.job_id}' stopped successfully.")
 ```
 
-This function first checks if the processes to be stopped is actually running as it cannot be stopped otherwise and raises an error message if it is not running. If the process is running, it is stopped by _self.process.terminate()_ and the accompanying flags _self.status_ and _self.process_ are set.
+This function first checks if the processes to be stopped is actually running as it cannot be stopped otherwise and raises an error message if it is not running. If the process is running, it is stopped by _self.process.terminate()_ and the accompanying flag _self.status_ is set. Furthermore, the process of running the simulation is stopped by calling terminate.
 
 Finally, the data of a simulation can be deleted by the following function
 
@@ -761,7 +511,7 @@ def delete(self):
     Raises:
         RuntimeError: if deleting a running simulation
     """
-    if self.status == SimulationStatus.RUNNING:
+    if self.status == TransformationState.RUNNING:
         msg = f"Simulation '{self.job_id}' is running."
         logging.error(msg)
         raise RuntimeError(msg)
@@ -769,9 +519,7 @@ def delete(self):
     logging.info(f"Simulation '{self.job_id}' and related files deleted.")
 ```
 
-This function first checks if a simulation has already stopped running. If it is not running, the data is
-simply deleted using the "rmtree" function of the shutil library. This library is a built-in-library
-of python that can be used to delete folders.
+This function first checks if a simulation has already stopped running. If it is not running, the data is simply deleted using the "rmtree" function of the shutil library. This library is a built-in-library of python that can be used to delete folders.
 
 It follows the function to retrieve the simulation results.
 
@@ -796,8 +544,8 @@ def get_output(self) -> Tuple[str]:
         SimPARTIXOutput, url=f"json://{path}"
     )
     if self.status in (
-        SimulationStatus.RUNNING,
-        SimulationStatus.CREATED,
+        TransformationState.RUNNING,
+        TransformationState.CREATED,
     ):
         msg = (
             f"Cannot download, simulation '{self.job_id}' "
@@ -836,20 +584,69 @@ This class can hold the data for each attribute (temperature, group and state of
 
 After a check that the simulation has actually finished, the data in the _result_ dictionary is fed into the dlite simpartix output object. One instance of the dlite object is saved to a file and another one is returned back by the function.
 
+## models
+
+The folder models contains only one single file with the name "transformation.py". This script is used as an interface between the GUI and the SimPARITX app. Its content is
+
+```python
+from pydantic import BaseModel, validator
+
+
+class TransformationInput(BaseModel):
+    laserPower: float = 150
+    laserSpeed: float = 3.0
+    sphereDiameter: float = 30e-6
+    phi: float = 0.7
+    powderLayerHeight: float = 60e-6
+
+    @validator("sphereDiameter")
+    def check_diameter(cls, v):
+        if v <= 5e-6:
+            raise ValueError("Sphere diameter value too small.")
+        return v
+
+    @validator("phi")
+    def check_phi(cls, v):
+        if v >= 1 or v < 0:
+            raise ValueError("Phi must be between 0 and 1.")
+        return v
+
+    @validator("powderLayerHeight")
+    def check_powderLayerHeight(cls, v, values):
+        if v < values["sphereDiameter"]:
+            raise ValueError(
+                "Powder layer height must be at least the sphere diameter."
+            )
+        return v
+
+```
+
+Here, we use a python built-in library pydantic to facilitate read in of input data while performing some basic checks if the input data is within an acceptable range.
+
 ## app.py
 
-This is a function that is actually called when building the docker image.
-The handling of the web application is realized by flask which is a python libarary. Understanding this part requires knowledge on html and CSS. Creating the webpage is not part of this tutorial.
+This is a function that is actually called when building the docker image. The handling of the web application is realized by FastAPI. Understanding this part requires knowledge on web communication. Creating the webpage is not part of this tutorial.
 
 We start with importing the main libraries
 
 ```python
 import json
 import logging
-import mimetypes #dea file type
-import os
-from pathlib import Path
-from flask import Flask, Response, request
+
+from fastapi import FastAPI, HTTPException, Response
+
+from marketplace_standard_app_api.models.transformation import (
+    TransformationCreateResponse,
+    TransformationId,
+    TransformationListResponse,
+    TransformationStateResponse,
+    TransformationUpdateModel,
+    TransformationUpdateResponse,
+)
+
+from marketplace_standard_app_api.routers import object_storage
+
+from models.transformation import TransformationInput
 
 from simulation_controller.simulation_manager import (
     SimulationManager,
@@ -857,11 +654,10 @@ from simulation_controller.simulation_manager import (
 )
 ```
 
-It follows the common notation to create a flask instance and to how to provide the secret key.
+It follows the common notation to create an instance of FastAPI.
 
 ```python
-app = Flask(__name__)
-app.secret_key = FLASK_SECRET_KEY
+app = FastAPI()
 ```
 
 We then create an object of the SimulationManger class.
@@ -870,119 +666,130 @@ We then create an object of the SimulationManger class.
 simulation_manager = SimulationManager()
 ```
 
-In flask, the endpoints are provided with the _@app.route_ decorator. We will hence see lines such as
+In FastAPI, the endpoints are provided with the _@app_ decorator. We will hence see lines that start with this decorator throughout the script. Our first example is the _heartbeat_, a function that is used by MarketPlace to check whether the corresponding app itsel is running and can be called.
 
 ```python
-@app.route("/")
+@app.get(
+    "/heartbeat", operation_id="heartbeat", summary="Check if app is alive"
+)
+async def heartbeat():
+    return "SimPARTIX app up and running"
 ```
 
-throughout the script. This is required by flask to build up the webpage correctly. We start with the "heartbeat" function.
+This function returns a string saying that the application is running.
+
+We continue with the function to cate a new simulation which is called whenever the "submit" button it hit.
 
 ```python
-@app.route("/heartbeat")
-def heartbeat():
-    return Response(
-        "SimPARTIX-App : application running.",
-        status=200,
-        mimetype="text/plain",
-    )
+@app.post(
+    "/transformations",
+    operation_id="newTransformation",
+    summary="Create a new transformation",
+    response_model=TransformationCreateResponse,
+)
+async def new_simulation(
+    payload: TransformationInput,
+) -> TransformationCreateResponse:
+    job_id = simulation_manager.create_simulation(payload)
+    return {"id": job_id}
 ```
 
-This function is needed by the MarketPlace servers in order to check if the SimPARTIX app is still running or whether it got stopped. This function returns a flask response object with a string "SimPARTIX-App : application running" as text that will be displayed, a status of 200 which is the commonly accepted value that everything is okay.
-
-We continue with the function for a new simulation which is activated whenever the "submit" button it hit.
-
-```python
-@app.route("/initialize", methods=["POST"])
-def new_simulation() -> str:
-    try:
-        request_obj = request.get_json()
-        job_id = simulation_manager.create_simulation(request_obj)
-        payload = {"id": job_id}
-        return Response(json.dumps(payload), status=200, mimetype="application/json")
-    except ValueError as ve:
-        return Response(str(ve), status=400)
-    except Exception as e:
-        msg = (
-            "Unexpected error while creating simulation "
-            f"with config: {request_obj}. Error message: {e}"
-        )
-        logging.error(msg)
-        return Response(str(msg), status=400, mimetype="text/plain")
-```
-
-This function retrieves the parameter set from the GUI that contains the values for laser power, laser speed and the geometry of the powder bed (this setting describes the simulation sufficiently). The "create_simulation" function from the simulation manager is called which was the SimPARTIX individual function to actually create all input files and the start configuration. Finally, errors are handled and the corresponding return types are defined.
+This function retrieves the parameter set from the GUI that contains the values such as laser power, laser speed and the geometry of the powder bed. The "create_simulation" function from the simulation manager is called which was the SimPARTIX individual function to actually create all input files and the start configuration.
 
 We continue with the function to update the simulation state. This function actually initiates running the simulation or stopping of a simulation.
 
 ```python
-@app.route("/update/<transformation_id>", methods=["PATCH"])
-def update_simulation_state(transformation_id: str):
-    state = json.loads(request.get_json()).get('state')
+@app.patch(
+    "/transformations/{transformation_id}",
+    summary="Update the state of the simulation.",
+    response_model=TransformationUpdateResponse,
+    operation_id="updateTransformation",
+    responses={
+        404: {"description": "Not Found."},
+        409: {"description": "Requested state not available"},
+        400: {"description": "Error executing update operation"},
+    },
+)
+def update_simulation_state(
+    transformation_id: TransformationId, payload: TransformationUpdateModel
+) -> TransformationUpdateResponse:
+    state = payload.state
     try:
         if state == "RUNNING":
-            simulation_manager.run_simulation(transformation_id)
+            simulation_manager.run_simulation(str(transformation_id))
         elif state == "STOPPED":
-            simulation_manager.stop_simulation(transformation_id)
+            simulation_manager.stop_simulation(str(transformation_id))
         else:
             msg = f"{state} is not a supported state."
-            return Response(msg, 400, mimetype="text/plain")
-        response = {"id": transformation_id, "state": state}
-        return Response(
-            json.dumps(response),
-            status=200,
-            mimetype="application/json",
+            raise HTTPException(status_code=400, detail=msg)
+        return {"id": TransformationId(transformation_id), "state": state}
+    except KeyError:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Transformation not found: {transformation_id}",
         )
-    except KeyError as ke:
-        return Response(str(ke), status=404)
+
     except RuntimeError as re:
-        return Response(str(re), status=400)
+        raise HTTPException(status_code=409, detail=re)
     except Exception as e:
         msg = (
             "Unexpected error while changing state of simulation "
             f"{transformation_id}. Error message: {e}"
         )
         logging.error(msg)
-        return Response(msg, status=400)
+        raise HTTPException(status_code=400, detail=msg)
 ```
 
 The next function is used to retrieve the simulation state. This function simply calls the "get_simulation_state" function from the simulation manager and handles some commonly occurring error states.
 
 ```python
-@app.route("/<transformation_id>/state", methods=["GET"])
-def get_simulation_state(transformation_id: str):
+@app.get(
+    "/transformations/{transformation_id}/state",
+    summary="Get the state of the simulation.",
+    response_model=TransformationStateResponse,
+    operation_id="getTransformationState",
+    responses={404: {"description": "Unknown simulation"}},
+)
+def get_simulation_state(
+    transformation_id: TransformationId,
+) -> TransformationStateResponse:
+    """Get the state of a simulation.
+
+    Args:
+        transformation_id (TransformationId): ID of the simulation
+
+    Returns:
+        TransformationStateResponse: The state of the simulation.
+    """
     try:
-        state = simulation_manager.get_simulation_state(transformation_id)
-        response = {"id": transformation_id, "state": str(state)}
-        return Response(
-            json.dumps(response),
-            status=200,
-            mimetype="application/json",
-        )
-    except KeyError as ke:
-        return Response(str(ke), status=404)
+        state = simulation_manager.get_simulation_state(str(transformation_id))
+        return {"id": transformation_id, "state": state}
+
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Simulation not found")
     except Exception as e:
         msg = (
-            "Unexpected error while querying for the status of a simulation "
+            "Unexpected error while querying for the status of simulation "
             f"{transformation_id}. Error message: {e}"
         )
-        logging.error(msg)
-        return Response(msg, status=400)
+        raise HTTPException(status_code=400, detail=msg)
 ```
 
 The next function is used to retrieve a list of all simulations. This function, again, makes used of the core features provided in the simulation manager.
 
 ```python
-@app.route("/", methods=["GET"])
-def get_simulation_list():
+@app.get(
+    "/transformations",
+    summary="Get all simulations.",
+    response_model=TransformationListResponse,
+    operation_id="getTransformationList",
+)
+def get_simulations():
     try:
-        simulation_list: list = simulation_manager.get_simulation_list()
-        logging.info(f"simulation list: {simulation_list}")
-        return Response(
-            response=json.dumps(simulation_list),
-            status=200,
-            mimetype="application/json",
-        )
+        items: list = simulation_manager.get_simulations()
+
+        logging.info(f"simulations: {items}")
+        return {"items": items}
     except Exception as e:
         msg = (
             "Unexpected error while fetching the list of simulations. "
@@ -995,96 +802,88 @@ def get_simulation_list():
 The next function "delete_simulation" provides the interface to the "delete_simulation" function of the simulation manager.
 
 ```python
-@app.route("/<transformation_id>", methods=["DELETE"])
-def delete_simulation(transformation_id: str):
+@app.delete(
+    "/transformations/{transformation_id}",
+    summary="Delete a transformation",
+    operation_id="deleteTransformation",
+)
+def delete_simulation(transformation_id: TransformationId):
     try:
-        simulation_manager.delete_simulation(transformation_id)
-        return Response(
-            f"Simulation '{transformation_id}' deleted successfully!",
-            status=200,
-            mimetype="text/plain",
-        )
+        simulation_manager.delete_simulation(str(transformation_id))
+        return {
+            "status": f"Simulation '{transformation_id}' deleted successfully!"
+        }
+
     except KeyError as ke:
-        return Response(str(ke), status=404)
+        raise HTTPException(status_code=404, detail=ke)
     except RuntimeError as re:
-        return Response(str(re), status=400)
+        raise HTTPException(status_code=400, detail=re)
     except Exception as e:
         msg = (
             "Unexpected error while deleting simulation "
             f"{transformation_id}. Error message: {e}"
         )
-        logging.error(msg)
-        return Response(msg, status=400)
+        raise HTTPException(status_code=400, detail=msg)
 ```
 
 There is also a function "get_results" to call the "get_simulation_output" function of the simulation manager.
 
 ```python
-@app.route("/datasets", methods=["GET"])
-def get_results():
-    dataset_name = request.args.get("dataset_name")
-    json_payload, mapping, mimetype = simulation_manager.get_simulation_output(
-        dataset_name
-    )
-    headers = {"x-semantic-mappings": mapping}
-    return Response(
-        response=json_payload,
-        status=200,
-        mimetype=mimetype,
-        headers=headers,
-    )
+@app.get(
+    "/results",
+    summary="Get a simulation's result",
+    operation_id="getDataset",
+    responses={200: {"content": {"vnd.sintef.dlite+json"}}},
+)
+def get_results(
+    collection_name: object_storage.CollectionName,
+    dataset_name: object_storage.DatasetName,
+    response: Response,
+):
+    json_payload = simulation_manager.get_simulation_output(str(dataset_name))
+    response.headers["x-semantic-mappings"] = "SimpartixOutput"
+    return json_payload
 ```
 
-We have two functions related to ontologies to realize the level-2 integration. These two functions are
+There are two functions related to ontologies to realize the level-2 integration. These two functions are
 
 ```python
-@app.route("/mappings", methods=["GET"])
+@app.get(
+    "/mappings",
+    summary="Get a list of the available mappings",
+    operation_id="listSemanticMappings",
+)
 def list_mappings():
-    return Response(
-        response=json.dumps(list(mappings.keys())),
-        status=200,
-        mimetype="application/json",
-    )
+    return list(mappings.keys())
 ```
 
 and
 
 ```python
-@app.route("/mappings/<semantic_mapping_id>", methods=["GET"])
+@app.get(
+    "/mappings/{semantic_mapping_id}",
+    summary="Get a specific mapping",
+    operation_id="getSemanticMapping",
+)
 def get_mapping(semantic_mapping_id: str):
     mapping = json.dumps(mappings.get(semantic_mapping_id))
     if not mapping:
-        return Response("Mapping not found", status=404)
-    return Response(
-        response=mapping,
-        status=200,
-        mimetype="application/json",
-    )
-
+        raise HTTPException(status_code=404, detail="Mapping not found")
+    return mapping
 ```
 
 to provide a list of all existing mappings and to retrieve one specific mapping.
-
-The file ends with the following line of code
-
-```python
-if __name__ == "__main__":
-    app.run()
-```
-
-This piece of code is a kind of safety check that the function "app.run()" is only called when "app.py" is actually being called by docker. It is also possible to load this script from somewhere else via "import app" if one of the functions should be use elsewhere and in this case, the function "run()" should not be called.
 
 ## requirements.txt
 
 The requirements file is an ordinary ascii file that contains those python libraries that are necessary somewhere in our python scripts. Some libraries are already installed elsewhere (explained [here](#dockerfile)), but several further libraries are necessary for the web communication. These libraries and more specific also the version of this library is defined in following manner
 
 ```
-flask == 2.1.2
-requests-oauthlib == 1.3.1
+fastapi<1.0.0
+marketplace-standard-app-api~=0.4
 DLite-Python == 0.3.9
+uvicorn<1.0.0
 ```
-
-"Flask" is necessary for the web communication, "requests-oauthlib" handles the authorization and "DLite-Python" is a file format provided by Sintef to facilitate the communication of data between the software modules. Providing those libraries in this format allows to install specific libraries.
 
 ## openAPI.yml
 
@@ -1096,7 +895,7 @@ In short, the API specification describes how to describe the RestAPI interface.
 openapi: 3.0.0
 
 info:
-  title: SimPARTIX
+  title: SimPARTIX MarketPlace app
   description: MarketPlace app for the SimPARTIX simulation software
   version: 1.0.5
   x-api-version: 0.3.0
@@ -1107,275 +906,353 @@ servers:
   - url: https://simpartix.materials-data.space
 
 paths:
-  # Administrative paths
   /heartbeat:
     get:
-      security:
-        - bearerAuth: []
-      description: Returns a heartbeat
+      summary: Check if app is alive
       operationId: heartbeat
       responses:
         "200":
-          description: Success
-
-  # Transformation app paths
-  /initialize:
-    post:
-      security:
-        - bearerAuth: []
-      description: Initialize a Transformation
-      operationId: newTransformation
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/TransformationConfig"
-      responses:
-        "200":
-          description: Success
+          description: Successful Response
           content:
-            resourceId:
-              schema:
-                type: string
-                example: 3e22541c-a95e-4443-8cdc-0866171d343b
-        "400":
-          description: Bad Request
-          content:
-            resourceId:
-              schema:
-                type: string
-                example: Wrong configuration input
-
-  /{transformation_id}/state:
+            application/json:
+              schema: {}
+  /transformations:
     get:
-      security:
-        - bearerAuth: []
-      description: Get the state of a Transformation
-      operationId: getTransformationState
-      parameters:
-        - in: path
-          name: transformation_id
-          schema:
-            type: string
-          required: true
-      responses:
-        "200":
-          description: Success
-          content:
-            state:
-              schema:
-                type: string
-                example: running
-        "404":
-          description: Not found
-          content:
-            resourceId:
-              schema:
-                type: string
-                example: Simulation Not found
-        "400":
-          description: Bad Request
-          content:
-            resourceId:
-              schema:
-                type: string
-                example: Unexpected error
-
-  /{transformation_id}:
-    delete:
-      security:
-        - bearerAuth: []
-      description: Delete the transformation
-      operationId: deleteTransformation
-      parameters:
-        - in: path
-          name: transformation_id
-          schema:
-            type: string
-          required: true
-      responses:
-        "200":
-          description: Success
-          content:
-            status:
-              schema:
-                type: string
-                example: Deleted successfully
-        "404":
-          description: Not found
-          content:
-            resourceId:
-              schema:
-                type: string
-                example: Simulation Not found
-        "400":
-          description: Bad Request
-          content:
-            resourceId:
-              schema:
-                type: string
-                example: Simulation is in progress
-  /update/{transformation_id}:
-    patch:
-      security:
-        - bearerAuth: []
-      description: Update the transformation state
-      operationId: updateTransformation
-      parameters:
-        - in: path
-          name: transformation_id
-          schema:
-            type: string
-          required: true
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/TransformationUpdate"
-      responses:
-        "200":
-          description: Success
-          content:
-            status:
-              schema:
-                type: string
-                example: Stopped successfully
-  /:
-    get:
-      security:
-        - bearerAuth: []
-      description: Get the List of Simulations
+      summary: Get all simulations.
       operationId: getTransformationList
       responses:
         "200":
-          description: Success
+          description: Successful Response
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: string
-                  example: [SimulationID-1, Simulation-2, "..."]
-
-  # dataSource endpoints
-  /datasets:
-    get:
-      security:
-        - bearerAuth: []
-      description: Get the simulation results (DLite json)
-      operationId: getDataset
-      parameters:
-        - in: query
-          name: dataset_name
-          schema:
-            type: string
-          required: true
+                $ref: "#/components/schemas/TransformationListResponse"
+    post:
+      summary: Create a new transformation
+      operationId: newTransformation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransformationInput"
+        required: true
       responses:
         "200":
-          description: Success
+          description: Successful Response
           content:
-            "*/*":
+            application/json:
               schema:
-                type: object
-        "404":
-          description: Not found
+                $ref: "#/components/schemas/TransformationCreateResponse"
+        "422":
+          description: Validation Error
           content:
-            resourceId:
+            application/json:
               schema:
-                type: string
-                example: Simulation not found
+                $ref: "#/components/schemas/HTTPValidationError"
+  /transformations/{transformation_id}:
+    delete:
+      summary: Delete a transformation
+      operationId: deleteTransformation
+      parameters:
+        - required: true
+          schema:
+            title: Transformation Id
+            type: string
+            format: uuid4
+          name: transformation_id
+          in: path
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+    patch:
+      summary: Update the state of the simulation.
+      operationId: updateTransformation
+      parameters:
+        - required: true
+          schema:
+            title: Transformation Id
+            type: string
+            format: uuid4
+          name: transformation_id
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransformationUpdateModel"
+        required: true
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransformationUpdateResponse"
         "400":
-          description: Bad Request
+          description: Error executing update operation
+        "404":
+          description: Not Found.
+        "409":
+          description: Requested state not available
+        "422":
+          description: Validation Error
           content:
-            resourceId:
+            application/json:
               schema:
-                type: string
-                example: Simulation is in progress
+                $ref: "#/components/schemas/HTTPValidationError"
+  /transformations/{transformation_id}/state:
+    get:
+      summary: Get the state of the simulation.
+      description: |-
+        Get the state of a simulation.
 
+        Args:
+            transformation_id (TransformationId): ID of the simulation
+
+        Returns:
+            TransformationStateResponse: The state of the simulation.
+      operationId: getTransformationState
+      parameters:
+        - required: true
+          schema:
+            title: Transformation Id
+            type: string
+            format: uuid4
+          name: transformation_id
+          in: path
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransformationStateResponse"
+        "404":
+          description: Unknown simulation
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+  /results:
+    get:
+      summary: Get a simulation's result
+      operationId: getDataset
+      parameters:
+        - required: true
+          schema:
+            title: Collection Name
+            maxLength: 255
+            minLength: 1
+            type: string
+          name: collection_name
+          in: query
+        - required: true
+          schema:
+            title: Dataset Name
+            minLength: 1
+            type: string
+          name: dataset_name
+          in: query
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            - vnd.sintef.dlite+json
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
   /mappings:
     get:
-      security:
-        - bearerAuth: []
-      description: Get the list semantic mappings
+      summary: Get a list of the available mappings
       operationId: listSemanticMappings
       responses:
         "200":
-          description: Success
+          description: Successful Response
           content:
-            "*/*":
-              schema:
-                type: object
-
+            application/json:
+              schema: {}
   /mappings/{semantic_mapping_id}:
     get:
-      security:
-        - bearerAuth: []
-      description: Get a specific semantic mapping set
+      summary: Get a specific mapping
       operationId: getSemanticMapping
       parameters:
-        - in: path
-          name: semantic_mapping_id
+        - required: true
           schema:
+            title: Semantic Mapping Id
             type: string
+          name: semantic_mapping_id
+          in: path
       responses:
         "200":
-          description: Success
+          description: Successful Response
           content:
-            "*/*":
-              schema:
-                type: object
-        "404":
-          description: Not found
+            application/json:
+              schema: {}
+        "422":
+          description: Validation Error
           content:
-            resourceId:
+            application/json:
               schema:
-                type: string
-                example: Semantic mapping Not found
-
+                $ref: "#/components/schemas/HTTPValidationError"
 components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
   schemas:
-    TransformationConfig:
-      title: TransformationConfig
-      required:
-        - Configuration
+    HTTPValidationError:
+      title: HTTPValidationError
       type: object
       properties:
-        laserStrength:
-          title: laserStrength
-          type: integer
+        detail:
+          title: Detail
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationError"
+    TransformationCreateResponse:
+      title: TransformationCreateResponse
+      required:
+        - id
+      type: object
+      properties:
+        id:
+          title: Id
+          type: string
+          format: uuid4
+    TransformationInput:
+      title: TransformationInput
+      type: object
+      properties:
+        laserPower:
+          title: Laserpower
+          type: number
+          default: 150
         laserSpeed:
-          title: laserSpeed
+          title: Laserspeed
           type: number
-        configuration:
-          title: Configuration
-          type: integer
+          default: 3
         sphereDiameter:
-          title: sphereDiameter
+          title: Spherediameter
           type: number
+          default: 3.0e-05
         phi:
-          title: phi
+          title: Phi
           type: number
+          default: 0.7
         powderLayerHeight:
-          title: powderLayerHeight
+          title: Powderlayerheight
           type: number
-      description: Transformation data model
-    TransformationUpdate:
-      title: TransformationUpdate
+          default: 6.0e-05
+    TransformationListResponse:
+      title: TransformationListResponse
+      required:
+        - items
+      type: object
+      properties:
+        items:
+          title: Items
+          type: array
+          items:
+            $ref: "#/components/schemas/TransformationModel"
+    TransformationModel:
+      title: TransformationModel
+      required:
+        - id
+        - parameters
+      type: object
+      properties:
+        id:
+          title: Id
+          type: string
+          format: uuid4
+        parameters:
+          title: Parameters
+          type: object
+        state:
+          $ref: "#/components/schemas/TransformationState"
+    TransformationState:
+      title: TransformationState
+      enum:
+        - CREATED
+        - RUNNING
+        - STOPPED
+        - COMPLETED
+        - FAILED
+      type: string
+      description: An enumeration.
+    TransformationStateResponse:
+      title: TransformationStateResponse
+      required:
+        - id
+        - state
+      type: object
+      properties:
+        id:
+          title: Id
+          type: string
+          format: uuid4
+        state:
+          $ref: "#/components/schemas/TransformationState"
+    TransformationUpdateModel:
+      title: TransformationUpdateModel
       required:
         - state
       type: object
       properties:
         state:
-          title: state
+          title: State
+          enum:
+            - RUNNING
+            - STOPPED
           type: string
-      description: Transformation update model
+    TransformationUpdateResponse:
+      title: TransformationUpdateResponse
+      required:
+        - id
+        - state
+      type: object
+      properties:
+        id:
+          title: Id
+          type: string
+          format: uuid4
+        state:
+          title: State
+          enum:
+            - RUNNING
+            - STOPPED
+          type: string
+    ValidationError:
+      title: ValidationError
+      required:
+        - loc
+        - msg
+        - type
+      type: object
+      properties:
+        loc:
+          title: Location
+          type: array
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string
 ```
 
 First the version of openAPI is provided which is 3.0.0.
@@ -1409,56 +1286,23 @@ Now we provide all the endpoints which are used as the flask route in the [previ
 ```yml
 /heartbeat:
   get:
-    security:
-      - bearerAuth: []
-    description: Returns a heartbeat
+    summary: Check if app is alive
     operationId: heartbeat
     responses:
       "200":
-        description: Success
+        description: Successful Response
+        content:
+          application/json:
+            schema: {}
 ```
 
 This snippet provides the endpoints _heartbeat_ and defines that is only has a _get_ method. There is one function to be called that we named _heartbeat_. Finally, we provide the security scheme and the response types where we only provided the 200 response which stands for a successful operation.
-
-Let us have a look at the function _initialize_.
-
-```yml
-/initialize:
-  post:
-    security:
-      - bearerAuth: []
-    description: Initialize a Transformation
-    operationId: newTransformation
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/TransformationConfig"
-    responses:
-      "200":
-        description: Success
-        content:
-          resourceId:
-            schema:
-              type: string
-              example: 3e22541c-a95e-4443-8cdc-0866171d343b
-      "400":
-        description: Bad Request
-        content:
-          resourceId:
-            schema:
-              type: string
-              example: Wrong configuration input
-```
-
-This function has a _post_ method which means data is provided to the function. Here, the data was the description of the simulation setup that was laser power, laser speed and the powder bed description. The error code 400 relates to an error on the client side and can be caused when we provide a bad set of input parameters. This snippet also shows an example input that is expected by the RestAPI for a successful operation.
 
 The remaining endpoints follow the same strategy and can be understood in the very same way.
 
 ## Dockerfile
 
-The SimPARTIX app is actually running within a docker container. [Docker](https://www.docker.com/) is a powerful tool to provide a well defined architecture with all necessary libraries. The docker file provided below is the instruction to build up a so called image in which all programs (such as python) and libraries (such as the python libraries) are defined. We build up this image based on an already present image that exist for SimPARTIX and which is hosted on the Fraunhofer own [docker image repository](ub.cc-asp.fraunhofer.de).
+The SimPARTIX app is actually running within a docker container. [Docker](https://www.docker.com/) is a powerful tool to provide a well defined architecture with all necessary libraries. The docker file provided below is the instruction to build up a so called image in which all programs (such as python) and libraries (such as the python libraries) are defined. We build up this image based on an already present image that exist for SimPARTIX and which is hosted on the Fraunhofer own [docker image repository](hub.cc-asp.fraunhofer.de).
 In this image, the libraries for SimPARTIX and ProPARTIX are already included such as numpy or pandas while applying the very same strategy as explained in this section. This is the reason for which they have not to be included again in the file [requirements.txt](#requirementstxt) again. If you are unfamiliar with docker, continue first with one of the vast options for docker tutorial. Docker has a steep learning curve though.
 
 We provide the content of our docker file and describe its content afterwards
@@ -1479,35 +1323,20 @@ ENV PROPARTIXPATH "/source/ProPARTIX/code"
 WORKDIR /app
 # To store the files from the simulations
 RUN mkdir simulation_files
-ADD simpartix ./simpartix
+ADD models ./models
+ADD simpartix  ./simpartix
 ADD simulation_controller ./simulation_controller
 ADD static ./static
-ADD requirements.txt .
-RUN pip install -r requirements.txt
+ADD requirements.txt  .
 ADD app.py .
-ENV FLASK_APP=app.py
-ENV PORT=5000
-CMD flask run --host=0.0.0.0 --port=${PORT}
+RUN pip install -r requirements.txt
+
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
-In the first step, we load the SimPARTIX image from the Fraunhofer repository to have a base with all functionalities available that are already required by SimPARTIX and ProPARTIX. This however does not include the software itself, but only the libraries.
-In the following, we add the "simpartix" folder to the image (see again [here](#including-your-own-software)) as a git submodule. In the image, the simpartix folder is however called "source". We change into that directory and there into a "code" folder where we put out files with which the SimPARTIX binary is compiled. Calling "RUN make -j 4" compiles the SimPARTIX binary. Similarly, we change into the ProPARTIX folder and compile here the files that are necessary for the ProPARTIX engine. At this point, the SimPARTIX binary and ProPARTIX functions are all present. We then move into the folder "app" in which alle the services of the SimPARTIX app are going to be running. We create a new folder _simulation_files_ and define the flask app and the port. Now the simpartix folder that includes the compiled SimPARTIX binary is added to the image as well as the _simulation_controller_ folder in which all the controller python files are located. The folder static contains some images that is of less importance. We add the file _requirements.txt_ and install all the python libraries via pip. Finally, we add the file _app.py_, set the corresponding environment variables for flask and start the flask application.
+In the first step, we load the SimPARTIX image from the Fraunhofer repository to have a base with all functionalities available that are already required by SimPARTIX and ProPARTIX. This however does not include the software itself, but only the libraries. In the following, we add the "simpartix" folder to the image (see again [here](#including-your-own-software)) as a git submodule. In the image, the simpartix folder is however called "source". We change into that directory and there into a "code" folder where we put out files with which the SimPARTIX binary is compiled. Calling "RUN make -j 4" compiles the SimPARTIX binary. Similarly, we change into the ProPARTIX folder and compile here the files that are necessary for the ProPARTIX engine. At this point, the SimPARTIX binary and ProPARTIX functions are all present. We then move into the folder "app" in which alle the services of the SimPARTIX app are going to be running.
 
-## prepare_deployment.sh
-
-This script needs to be executed once in order to export the client id, the sercret and the flask secret key to a file. These files are going to be used in the following.
-
-```bash
-set -e
-set -u
-
-source .env
-export FLASK_SECRET_KEY=$(openssl rand -base64 24)
-echo -n $CLIENT_ID > secrets/client_id
-echo -n $CLIENT_SECRET > secrets/client_secret
-echo -n $FLASK_SECRET_KEY > secrets/flask_secret
-
-```
+We then copy the folder "simulation_files", "models", "simpartix", "static" and "simpartix_controller" and define the flask app and the port. These folders include all the files explained above as well as the SimPARTIX binary. The folder "static" has not been explained as it only contains some figures. Next, we add the file _requirements.txt_ and install all the python libraries via pip. Finally, we add the file _app.py_, set the corresponding environment variables for flask and start the fastapi application.
 
 ## docker-compose.yml
 
@@ -1520,29 +1349,14 @@ version: "3.6"
 services:
   simpartix_app:
     build: .
-    environment:
-      - MARKETPLACE_HOST
-    secrets:
-      - client_id
-      - client_secret
-      - flask_secret
     ports:
-      - 8000:5000
-
-secrets:
-  client_id:
-    file: ./secrets/client_id
-  client_secret:
-    file: ./secrets/client_secret
-  flask_secret:
-    file: ./secrets/flask_secret
+      - 8000:8000
 ```
 
 This files provides the following information
 
 - the version number of the docker engine to allow the correct functionality of docker compose.
-- the services which in this case is only the simpartix app. For each service, we must specify where docker can find the corresponding docker file. This is done by the keyword _build_ and the docker file is already in this folder. We also specify that we need three secrets which are provided later in the file. Last but not least, the ports 8000 and 5000 are exposed.
-- the location of the secrets that are required by the simpartix app application.
+- the services which in this case is only the simpartix app. For each service, we must specify where docker can find the corresponding docker file. This is done by the keyword _build_ and the docker file is already in this folder and hence we add the point. Last but not least, the port 8000 is exposed.
 
 When having such a docker compose yaml file within our directory, the only command we have to execute is
 
