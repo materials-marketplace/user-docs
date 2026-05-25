@@ -142,7 +142,6 @@ Once you've clicked on "Postprocess results," you will see a screen that looks s
 The resulting plots are described in more detail below:
 
 - **Rheometer results** This section shows a comparison between numerical and experimental rheometer data
-
   - **Moduli**: This plot compares G' and G''.
   - **Viscosity**: This plot compares viscosity.
 
